@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Hello, sqlite3</title>
+  </head>
+  <body>
+    <script src="jswasm/sqlite3.js"></script>
+    <script src="demo-123.js"></script>
+
+    <script>window.sqlite3InitModule().then(function(sqlite3){
+        // The module is now loaded and the sqlite3 namespace
+        // object was passed to this function.
+        console.log("sqlite3:", sqlite3);
+      });
+      globalThis.sqlite3 = sqlite3;
+    </script>
+
+<div class="login-box">
+    <div class="login header">
+        <header>Login</header>
+        <h1>Type in your username</h1>
+    <div class="input-box">
+        <input type="text" class="input-field" placeholder="USERNAME" autocomplete="off" required>
+    </div>
+    <h1>Type in your email</h1>
+    <div class="input-box">
+        <input type="text" class="input-field" placeholder="EMAIL" autocomplete="off" required>
+    </div>
+    <h1>Type in your password</h1>
+    <div class="input-box">
+        <input type="password" class="input-field" placeholder="PASSWORD" autocomplete="off" required>
+    </div>
+    </div>
+    <div class="input-submit">
+        <form>
+        <button type="submit" formaction="file:///C:/Users/ASUS/Documents/HLRS%20-%20Grading%20AI/Userpage.htm" class="submit-btn" id="submit">SIGN IN</button>
+        </form>
+    </div>
+</div>
+    
+  </body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 25%;
+            background-color: #f1f1f1;
+            position: fixed;
+            height: 100%;
+            overflow: auto;
+        }
+        li a {
+            display: block;
+            color: black;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+        li {
+            display: block;
+            color: black;
+            text-decoration: none;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        li a.active {
+            background-color: #9B59B6;
+            color: white;
+        }
+        li a:hover:not(.active) {
+            background-color: #555;
+            color: white;
+        }
+        h2 {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            margin: 10px;
+            color: #9B59B6;
+        }
+        .search {
+            color: #555;
+            margin: 10px;
+        }
+        .content {
+            margin-left: 25%;
+            padding: 20px;
+        }
+        .section {
+            display: none; /* Hide sections by default */
+        }
+        .active-section {
+            display: block; /* Only show the active section */
+        }
+        .active{
+            background-color: #9B59B6;
+            color: white;
+        }
+        button{
+            color: #9B59B6;
+            text-align: center;
+            border-color: #fff;
+            align-items: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            margin: 2px;
+            border-radius: 1px;
+        }
+        input{
+            color: #555;
+            text-align: center;
+            align-items: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            margin: 2px;
+        }
+        p{
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            margin: 2px;
+            color: #9B59B6;
+        }
+        table, td, tr {
+        border:1px solid #9B59B6;
+        width: 60%;
+        font-size: 16px;
+        border- color: black;
+        outline: none;
+        background: transparent;
+        }
+
+    </style>
+</head>
+<body>
+    <script src="jswasm/sqlite3.js"></script>
+    <script src="demo-123.js"></script>
+
+    <script>window.sqlite3InitModule().then(function(sqlite3){
+        // The module is now loaded and the sqlite3 namespace
+        // object was passed to this function.
+        console.log("sqlite3:", sqlite3);
+      });
+      globalThis.sqlite3 = sqlite3;
+    </script>
+
+    <ul id="myMenu">
+        <h2>Menu</h2>
+        <li><input class="search" type="text" id="mySearch" onkeyup="myFunction()" placeholder="Search..." title="Type in a category"></li>
+        <li><a class="active" href="#" onclick="showContent('home')">Home</a></li>
+        <li><a href="#" onclick="showContent('profile')">Profile</a></li>
+        <li><a href="#" onclick="showContent('active-courses')">Active courses</a></li>
+        <li><a href="#" onclick="showContent('completed-courses')">Completed courses</a></li>
+        <li><a href="#" onclick="showContent('settings')">Settings</a></li>
+    </ul>
+
+    <div class="content">
+        <div id="home" class="section active-section">
+            <h1>Optimizing a grading AI</h1>
+            <p>Here you can submit your papers to garde them by AI</p>
+        </div>
+        <div id="profile" class="section">
+            <h1>Profile</h1>
+            <p>This is the profile content.</p>
+            <input type="text" placeholder="username"><button><p>Submit</p></button><p>
+            <input type="text" placeholder="email"><button><p>Submit</p></button><p>
+            <input type="password" placeholder="password"><button><p>Submit</p></button><p>
+        </div>
+        <div id="active-courses" class="section">
+            <h1>Active Courses</h1>
+            <p>This is the active courses content.</p>
+            <table class="stilldunno">
+                <tr>
+                  <th>Name of the course</th>
+                  <th>Beginning date</th>
+                  <th>End date</th>
+                  <th>Number of students</th>
+                  <th>Prompt</th>
+                </tr>
+                <tr>
+                  <td data-th="Name"><input type="text"></input></td>
+                  <td data-th="Name"><input type="text"></input></td>
+                  <td data-th="Name"><input type="text"></input></td>
+                  <td data-th="Name"><input type="text"></input></td>
+                  <td data-th="Name"><input type="text"></input></td>
+                </tr>
+                <tr>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                </tr>
+                <tr>
+                  <td data-th="End"><input type="number"></input></td>
+                  <td data-th="End"><input type="number"></input></td>
+                  <td data-th="End"><input type="number"></input></td>
+                  <td data-th="End"><input type="number"></input></td>
+                  <td data-th="End"><input type="number"></input></td>
+                </tr>
+                <tr>
+                    <td data-th="number"><input type="number"></input></td>
+                    <td data-th="number"><input type="number"></input></td>
+                    <td data-th="number"><input type="number"></input></td>
+                    <td data-th="number"><input type="number"></input></td>
+                    <td data-th="number"><input type="number"></input></td>
+                  </tr>
+                  <tr>
+                    <td data-th="prompt"><input type="text"></input></td>
+                    <td data-th="prompt"><input type="text"></input></td>
+                    <td data-th="prompt"><input type="text"></input></td>
+                    <td data-th="prompt"><input type="text"></input></td>
+                    <td data-th="prompt"><input type="text"></input></td>
+                  </tr>
+              </table>
+              <form action="/action_page.php">
+                <input type="file" id="myFile" name="filename">
+                <input type="submit" placeholder="upload">
+                <button><p>Submit</p></button>
+                </form>
+        </div>
+        <div id="completed-courses" class="section">
+            <h1>Completed Courses</h1>
+            <p>This is the completed courses content.</p>
+            <table class="stilldunno">
+                <tr>
+                  <th>Name of the course</th>
+                  <th>Beginning date</th>
+                  <th>End date</th>
+                  <th>Number of students</th>
+                  <th>Prompt</th>
+                </tr>
+                <tr>
+                  <td data-th="Name"><input type="text"></input></td>
+                  <td data-th="Name"><input type="text"></input></td>
+                  <td data-th="Name"><input type="text"></input></td>
+                  <td data-th="Name"><input type="text"></input></td>
+                  <td data-th="Name"><input type="text"></input></td>
+                </tr>
+                <tr>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                  <td data-th="Beginning"><input type="number"></input></td>
+                </tr>
+                <tr>
+                  <td data-th="End"><input type="number"></input></td>
+                  <td data-th="End"><input type="number"></input></td>
+                  <td data-th="End"><input type="number"></input></td>
+                  <td data-th="End"><input type="number"></input></td>
+                  <td data-th="End"><input type="number"></input></td>
+                </tr>
+                <tr>
+                    <td data-th="number"><input type="number"></input></td>
+                    <td data-th="number"><input type="number"></input></td>
+                    <td data-th="number"><input type="number"></input></td>
+                    <td data-th="number"><input type="number"></input></td>
+                    <td data-th="number"><input type="number"></input></td>
+                  </tr>
+                  <tr>
+                    <td data-th="prompt"><input type="text"></input></td>
+                    <td data-th="prompt"><input type="text"></input></td>
+                    <td data-th="prompt"><input type="text"></input></td>
+                    <td data-th="prompt"><input type="text"></input></td>
+                    <td data-th="prompt"><input type="text"></input></td>
+                  </tr>
+              </table>
+        </div>
+        <div id="settings" class="section">
+            <h1>Settings</h1>
+            <p>API Key</p>
+            <input type="text" placeholder="API-Key"><p></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to switch content based on clicked menu item
+        function showContent(contentId) {
+            // Hide all sections
+            var sections = document.querySelectorAll('.section');
+            sections.forEach(function(section) {
+                section.classList.remove('active-section');
+            });
+
+            // Show the selected section
+            var selectedSection = document.getElementById(contentId);
+            selectedSection.classList.add('active-section');
+
+            // Set the active class on the clicked menu item
+            var links = document.querySelectorAll('li a');
+            links.forEach(function(link) {
+                link.classList.remove('active');
+            });
+            var activeLink = document.querySelector('a[href="#' + contentId + '"]');
+            activeLink.classList.add('active');
+        }
+
+        // Search functionality (same as before)
+        function myFunction() {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("mySearch");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("myMenu");
+            li = ul.getElementsByTagName("li");
+
+            for (i = 0; i < li.length; i++) {
+                // Skip the first `li` that contains the search input field
+                a = li[i].getElementsByTagName("a")[0];
+                if (a) { // Only process `li` elements that contain an <a> tag
+                    if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.display = ""; // Show matching elements
+                    } else {
+                        li[i].style.display = "none"; // Hide non-matching elements
+                    }
+                }
+            }
+        }
+
+        // Show Home page by default
+        showContent('home');
+    </script>
+</body>
+</html>
