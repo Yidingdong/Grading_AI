@@ -7,11 +7,12 @@ This is a tutorial to run, test, and verify the backend of the grading app.
 1. Run in a terminal when in the Directory this Project is.
 
 ```bash
-docker compose up --build --detach
+docker compose up --build --d
 ``` 
 
 2. Then wait About a Minute
-3. Then run 
+3. do "cd tests"
+4. Then run 
 ```bash
 python test.py
 ```

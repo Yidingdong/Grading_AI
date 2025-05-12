@@ -123,7 +123,7 @@ print("\n=== Step 4: Uploading PDF via Docker Script ===")
 # Note: Ensure the PDF path /app/pdfs/Lorem_ipsum.pdf is correct *inside* the container
 pdf_upload_cmd = [
     "python", "pdf_to_mongodb.py",
-    "--pdf", "/app/pdfs/Microsoft_Certificate.pdf",
+    "--pdf", "/app/pdfs/Lorem_ipsum.pdf",
     "--username", "teacher_alice", # Adjust if needed
     "--course", "IT 102",         # Adjust if needed
     "--student-name", "John Doe", # Adjust if needed
