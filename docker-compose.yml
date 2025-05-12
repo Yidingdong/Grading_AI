@@ -9,6 +9,7 @@ services:
 
   mongodb-server:
     image: mongo:latest
+    container_name: hlrs-mongodb-server-1
     ports:
       - "27017:27017"
     environment:
@@ -23,7 +24,7 @@ services:
     image: mysql:latest
     container_name: mysql-server
     ports:
-      - "3306:3306" 
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: Informations
@@ -38,34 +39,49 @@ services:
     build:
       context: .
       dockerfile: ./register/Dockerfile
+    container_name: hlrs-registration-service-1
     ports:
       - "5000:5000"
     networks:
       - app-network
     depends_on:
-      - mysql-server
-    command: ["/bin/sh", "-c", "wait-for-it.sh mysql-server:3306 --timeout=60 --strict -- echo 'MySQL is up, starting registration...' && python register.py"]
+      mysql-server:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    command: ["/bin/sh", "-c", "wait-for-it.sh mysql-server:3306 --timeout=60 --strict -- echo '[Register Service] MySQL is up, starting registration...' && python register.py"]
 
   course-allocation-service:
     build:
       context: .
       dockerfile: ./course_allocation/Dockerfile
+    container_name: hlrs-course-allocation-service-1
     ports:
       - "5001:5001"
     networks:
       - app-network
     depends_on:
-      - mysql-server
-    command: ["/bin/sh", "-c", "wait-for-it.sh mysql-server:3306 --timeout=60 --strict -- echo 'MySQL is up, starting course allocation...' && python course_allocation.py"]
-  
+      mysql-server:
+        condition: service_started
+      registration-service:
+        condition: service_healthy
+    command: ["/bin/sh", "-c", "wait-for-it.sh mysql-server:3306 --timeout=60 --strict -- echo '[Course Service] MySQL is up, Registration Service is healthy.' && echo '[Course Service] Starting course allocation application...' && python course_allocation.py"]
+
   pdf-uploader:
     build: ./pdf_to_mongodb
-    volumes: 
+    container_name: hlrs-pdf-uploader-1
+    volumes:
       - ./pdf_to_mongodb/pdfs:/app/pdfs
     networks:
       - app-network
     depends_on:
-      - mongodb-server
+      mongodb-server:
+         condition: service_started
+
 volumes:
   mongodb-data:
   mysql-data:

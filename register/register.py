@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 import mysql.connector
 import bcrypt
@@ -14,23 +14,34 @@ db_config = {
     'auth_plugin': 'mysql_native_password'
 }
 
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "ok"}), 200
 
 def create_users_table():
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(255) UNIQUE NOT NULL,
-            password_hash VARCHAR(255) NOT NULL,
-            name VARCHAR(255) NOT NULL,
-            user_type ENUM('student', 'teacher') NOT NULL
-        )
-    ''')
-    conn.commit()
-    cursor.close()
-    conn.close()
-
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(255) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                user_type ENUM('student', 'teacher') NOT NULL
+            )
+        ''')
+        conn.commit()
+        print("[Register Service] 'users' table checked/created.")
+    except mysql.connector.Error as err:
+        print(f"[Register Service] Error creating users table: {err}")
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
 
 class Registration(Resource):
     def post(self):
@@ -45,11 +56,13 @@ class Registration(Resource):
             bcrypt.gensalt()
         ).decode('utf-8')
 
+        conn = None
+        cursor = None
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
             cursor.execute('''
-                INSERT INTO users 
+                INSERT INTO users
                 (username, password_hash, name, user_type)
                 VALUES (%s, %s, %s, %s)
             ''', (data['username'], password_hash,
@@ -59,12 +72,15 @@ class Registration(Resource):
         except mysql.connector.Error as err:
             return {'message': f'Database error: {err}'}, 500
         finally:
-            if 'conn' in locals() and conn.is_connected():
+            if cursor:
                 cursor.close()
+            if conn and conn.is_connected():
                 conn.close()
 
-
+print("[Register Service] Creating users table...")
 create_users_table()
+print("[Register Service] Starting Flask app...")
+
 api.add_resource(Registration, '/register')
 
 if __name__ == '__main__':
