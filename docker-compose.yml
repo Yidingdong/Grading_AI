@@ -81,6 +81,10 @@ services:
     depends_on:
       mongodb-server:
          condition: service_started
+    environment:
+      # ---> Set prefix back to the full path containing .traineddata files <---
+      - TESSDATA_PREFIX=/usr/share/tesseract-ocr/5/tessdata
+    # ---> End of modification <---
 
 volumes:
   mongodb-data:
