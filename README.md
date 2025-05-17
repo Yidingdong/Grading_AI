@@ -9,17 +9,17 @@ This is a tutorial to run, test, and verify the backend of the grading app.
 ```bash
 docker compose up --build -d
 ``` 
-2. do "cd tests"
-3. Then run 
+2. do the following:
 ```bash
+cd tests
 python test.py
 ```
-4. Then wait until execution is finished
-5. Then run 
+3. Then wait until execution is finished
+4. Then run 
 ```bash
 python verify.py
 ```
-6. When composing down, run 
+5. When composing down, run 
 ```bash
 docker compose down -v --rmi all
 ```
