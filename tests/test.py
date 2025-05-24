@@ -7,6 +7,7 @@ import sys
 
 USER_API_BASE_URL = "http://localhost:5000"
 COURSE_API_BASE_URL = "http://localhost:5001"
+OLLAMA_API_BASE_URL = "http://localhost:11434"
 PDF_UPLOADER_SERVICE_NAME = "pdf-uploader"
 
 MYSQL_CONTAINER = "mysql-server"
@@ -18,48 +19,60 @@ MONGO_USER = "root"
 MONGO_PASSWORD = "example"
 MONGO_DB = "Exams"
 
-def wait_for_service(url, service_name, timeout=120):
+OLLAMA_TEST_MODEL = "granite3.2-vision:latest"
+
+
+def wait_for_service(url, service_name, timeout=120, health_path="/health", is_ollama=False):
     print(f"Waiting for {service_name} at {url}...")
     start_time = time.time()
+    check_url = f"{url}{health_path}"
+    if is_ollama:
+        check_url = f"{url}/api/tags"
+
     while time.time() - start_time < timeout:
         try:
-            response = requests.get(url, timeout=5)
-            print(f"{service_name} responded with status {response.status_code}. Ready.")
-            return True
+            response = requests.get(check_url, timeout=10)
+            if is_ollama:
+                if response.status_code == 200:
+                    try:
+                        models = response.json().get("models", [])
+                        if any(m.get("name") == OLLAMA_TEST_MODEL for m in models):
+                            print(f"\n{service_name} is up and model '{OLLAMA_TEST_MODEL}' is available.")
+                            return True
+                        else:
+                            print(f".(Ollama up, model {OLLAMA_TEST_MODEL} not yet listed)", end='', flush=True)
+                    except json.JSONDecodeError:
+                        print(f".(Ollama up, but /api/tags response not JSON)", end='', flush=True)
+                else:
+                    print(f".(Ollama status {response.status_code})", end='', flush=True)
+
+            elif response.status_code == 200:
+                print(f"\n{service_name} responded with status {response.status_code}. Ready.")
+                return True
+            else:
+                print(f".(status {response.status_code})", end='', flush=True)
+
         except requests.exceptions.ConnectionError:
             print(f".", end='', flush=True)
-            time.sleep(3)
         except requests.exceptions.Timeout:
             print(f"T", end='', flush=True)
-            time.sleep(3)
         except requests.exceptions.RequestException as e:
             print(f"\nUnexpected error while checking {service_name}: {e}")
-            time.sleep(3)
 
-    print(f"\nError: Timeout waiting for {service_name} at {url} after {timeout} seconds.")
+        time.sleep(5)
+
+    print(
+        f"\nError: Timeout waiting for {service_name} (or model {OLLAMA_TEST_MODEL} for Ollama) at {url} after {timeout} seconds.")
     return False
 
-def run_docker_exec(service_name, command_args, capture=True):
-    try:
-        find_cmd = ["docker", "compose", "ps", "-q", service_name]
-        print(f"\n--- Finding container ID for service '{service_name}' ---")
-        print(f"Command: {' '.join(shlex.quote(str(arg)) for arg in find_cmd)}")
-        process = subprocess.run(find_cmd, capture_output=True, text=True, check=True)
-        actual_container_id = process.stdout.strip()
-        if not actual_container_id:
-            print(f"!!! Error: Could not find running container for service '{service_name}' !!!")
-            raise ValueError(f"Service {service_name} not found or not running.")
-        print(f"Found container ID: {actual_container_id}")
-    except (subprocess.CalledProcessError, FileNotFoundError, ValueError) as e:
-        print(f"!!! Failed to get container ID: {e} !!!")
-        raise
 
-    base_command = ["docker", "exec", actual_container_id]
+def run_docker_exec(service_name, command_args, capture=True):
+    base_command = ["docker", "compose", "exec", service_name]
     full_command = base_command + command_args
     print(f"\n--- Running Docker Command ---")
     print(f"Command: {' '.join(shlex.quote(str(arg)) for arg in full_command)}")
     try:
-        result = subprocess.run(full_command, capture_output=capture, text=True, check=True)
+        result = subprocess.run(full_command, capture_output=capture, text=True, check=True, encoding='utf-8')
         if capture:
             print("--- Docker Command Output ---")
             if result.stdout:
@@ -69,7 +82,7 @@ def run_docker_exec(service_name, command_args, capture=True):
                 print("STDERR:")
                 print(result.stderr.strip())
             print("--- Docker Command End ---")
-        return result.stdout, result.stderr
+        return result
     except subprocess.CalledProcessError as e:
         print(f"!!! Docker command failed with exit code {e.returncode} !!!")
         if e.stdout: print("STDOUT:\n", e.stdout.strip())
@@ -82,17 +95,25 @@ def run_docker_exec(service_name, command_args, capture=True):
         print(f"!!! An unexpected error occurred running docker exec: {e} !!!")
         raise
 
-def make_api_request(method, url, data=None):
+
+def make_api_request(method, url, data=None, headers=None):
     print(f"\n--- Making API Request ---")
     print(f"Method: {method.upper()}")
     print(f"URL: {url}")
     if data:
         print(f"Data: {json.dumps(data)}")
 
-    headers = {'Content-Type': 'application/json'}
+    if headers is None:
+        headers = {'Content-Type': 'application/json'}
+    else:
+        if data and 'Content-Type' not in headers:
+            headers['Content-Type'] = 'application/json'
+
     try:
-        if method.lower() == 'post':
-            response = requests.post(url, json=data, headers=headers, timeout=10)
+        if method.lower() == 'get':
+            response = requests.get(url, headers=headers, timeout=10)
+        elif method.lower() == 'post':
+            response = requests.post(url, json=data, headers=headers, timeout=30)
         elif method.lower() == 'put':
             response = requests.put(url, json=data, headers=headers, timeout=10)
         else:
@@ -110,7 +131,7 @@ def make_api_request(method, url, data=None):
         return response
 
     except requests.exceptions.ConnectionError as e:
-        print(f"!!! API Connection Error: Could not connect to {url}. Is the service running? !!!")
+        print(f"!!! API Connection Error: Could not connect to {url}. Is the service running and port exposed? !!!")
         print(f"Error details: {e}")
         raise
     except requests.exceptions.Timeout:
@@ -123,13 +144,15 @@ def make_api_request(method, url, data=None):
             print(f"Response Body: {e.response.text}")
         raise
 
+
 print("======== Starting Test Script ========")
 
 registration_ready = wait_for_service(USER_API_BASE_URL, "Registration Service")
-course_ready = wait_for_service(COURSE_API_BASE_URL, "Course Allocation Service")
+course_ready = wait_for_service(COURSE_API_BASE_URL, "Course Allocation Service", health_path="/health")  # UPDATED
+ollama_ready = wait_for_service(OLLAMA_API_BASE_URL, "Ollama AI Service", timeout=600, is_ollama=True)
 
-if not registration_ready or not course_ready:
-    print("\n!!! Required services did not become available. Aborting tests. !!!")
+if not registration_ready or not course_ready or not ollama_ready:
+    print("\n!!! One or more required services did not become available. Aborting tests. !!!")
     sys.exit(1)
 
 print("\n=== All required API services are ready. Starting Test Execution ===")
@@ -147,29 +170,60 @@ try:
     print("\n=== Step 2: Creating a Course ===")
     course_payload = {"name": "Advanced Python", "duration_weeks": 16, "teacher_id": 1}
     course_response = make_api_request("post", f"{COURSE_API_BASE_URL}/courses", course_payload)
+    course_id = course_response.json().get('course_id')
+    if not course_id:
+        raise ValueError("Failed to get course_id from course creation response.")
 
     print("\n=== Step 3: Assigning Students to Course ===")
     assignment_payload = {"student_ids": [2, 3]}
-    make_api_request("put", f"{COURSE_API_BASE_URL}/courses/1/students", assignment_payload)
+    make_api_request("put", f"{COURSE_API_BASE_URL}/courses/{course_id}/students", assignment_payload)
 
     print("\n=== Step 4: Uploading Lorem Ipsum OCR PDF via Docker Script ===")
     pdf_upload_cmd = [
         "python", "pdf_to_mongodb.py",
-        "--pdf", "/app/pdfs/Lorem_ipsum_OCR_Version.pdf", # Changed filename
-        "--username", "student2", # Using different student for variation
+        "--pdf", "/app/pdfs/Lorem_ipsum_OCR_Version.pdf",
+        "--username", "student2",
         "--course", "Advanced Python",
-        "--student-name", "Bob Johnson", # Matching student2
-        "--student-id", "3", # Matching student2 ID
+        "--student-name", "Bob Johnson",
+        "--student-id", "3",
         "--teacher", "prof_x",
-        "--category", "answer_sheet", # Changed category
-        "--lang", "eng" # Explicitly set to English (default)
+        "--category", "answer_sheet",
+        "--lang", "eng"
     ]
     run_docker_exec(PDF_UPLOADER_SERVICE_NAME, pdf_upload_cmd)
 
+    print("\n=== Step 5: Uploading StGB Auszug PDF (Reference Material) ===")
+    stgb_pdf_upload_cmd = [
+        "python", "pdf_to_mongodb.py",
+        "--pdf", "/app/pdfs/StGB_Auszug.pdf",
+        "--username", "prof_x",
+        "--course", "Advanced Python",
+        "--student-name", "N/A",
+        "--teacher", "prof_x",
+        "--category", "reference_material",
+        "--lang", "deu"
+    ]
+    run_docker_exec(PDF_UPLOADER_SERVICE_NAME, stgb_pdf_upload_cmd)
+
+    print("\n=== Step 6: Testing Ollama AI Service ===")
+    ollama_payload = {
+        "model": OLLAMA_TEST_MODEL,
+        "prompt": "What is 2+2?",
+        "stream": False
+    }
+    ollama_response = make_api_request("post", f"{OLLAMA_API_BASE_URL}/api/generate", data=ollama_payload)
+    if ollama_response and ollama_response.json().get("response"):
+        print(f"Ollama generated response: {ollama_response.json()['response'][:100]}...")
+    else:
+        raise ValueError("Ollama did not return a valid response.")
+
     print("\n=== Test Execution Finished Successfully ===")
-    print("=== Run python verify.py to check database state ===")
+    print("=== Run python verify.py to check database state and Ollama model list ===")
 
 except Exception as e:
-    print(f"\n!!! An error occurred during test execution: {e} !!!")
+    print(f"\n!!! An error occurred during test execution: {type(e).__name__} - {e} !!!")
+    import traceback
+
+    traceback.print_exc()
     print("=== Test Execution Failed ===")
     sys.exit(1)

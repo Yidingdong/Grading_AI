@@ -82,13 +82,31 @@ services:
       mongodb-server:
          condition: service_started
     environment:
-      # ---> Set prefix back to the full path containing .traineddata files <---
       - TESSDATA_PREFIX=/usr/share/tesseract-ocr/5/tessdata
-    # ---> End of modification <---
+
+  ollama-service:
+    build:
+      context: .
+      dockerfile: ./ollama_service/Dockerfile
+    container_name: ollama-ai-server
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:11434/api/tags || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
 
 volumes:
   mongodb-data:
   mysql-data:
+  ollama-data:
 
 networks:
   app-network:
