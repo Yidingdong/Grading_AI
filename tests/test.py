@@ -78,11 +78,14 @@ def run_docker_exec(service_name, command_args, capture=True):
         result = subprocess.run(full_command, capture_output=capture, text=True, check=True, encoding='utf-8')
         if capture:
             print("--- Docker Command Output ---")
+            # pdf_to_mongodb.py now uses logging, which might go to stderr by default in Docker exec
+            # if not explicitly configured for stdout.
+            # We will print both stdout and stderr to catch the logs.
             if result.stdout:
                 print("STDOUT:")
                 print(result.stdout.strip())
             if result.stderr:
-                print("STDERR:")
+                print("STDERR:")  # Logs from pdf_to_mongodb might appear here
                 print(result.stderr.strip())
             print("--- Docker Command End ---")
         return result
@@ -192,22 +195,19 @@ try:
         "--student-id", "3",
         "--teacher", "prof_x",
         "--category", "answer_sheet",
-        "--lang", "eng"
+        "--lang", "eng",
+        "--ocr-dpi", "300"
     ]
     lorem_upload_result = run_docker_exec(PDF_UPLOADER_SERVICE_NAME, pdf_upload_cmd_lorem)
-    match = re.search(r"Submission ID: ([0-9a-fA-F]+)", lorem_upload_result.stdout)
+
+    output_to_search = lorem_upload_result.stdout + "\n" + lorem_upload_result.stderr
+    match = re.search(r"Submission ID: ([0-9a-fA-F]+)", output_to_search)
     if match:
         LOREM_IPSUM_MONGO_ID = match.group(1)
         print(f"Captured Lorem Ipsum MongoDB ID: {LOREM_IPSUM_MONGO_ID}")
     else:
-        match_err = re.search(r"Submission ID: ([0-9a-fA-F]+)", lorem_upload_result.stderr)
-        if match_err:
-            LOREM_IPSUM_MONGO_ID = match_err.group(1)
-            print(f"Captured Lorem Ipsum MongoDB ID from stderr: {LOREM_IPSUM_MONGO_ID}")
-        else:
-            print("Warning: Could not parse Lorem Ipsum MongoDB ID from pdf_uploader output.")
-            print(f"STDOUT from pdf_uploader: {lorem_upload_result.stdout}")
-            print(f"STDERR from pdf_uploader: {lorem_upload_result.stderr}")
+        print("Warning: Could not parse Lorem Ipsum MongoDB ID from pdf_uploader output.")
+        print(f"Combined STDOUT/STDERR from pdf_uploader:\n{output_to_search}")
 
     print("\n=== Step 5: Uploading StGB Auszug PDF (Reference Material) ===")
     stgb_pdf_upload_cmd = [
@@ -218,7 +218,8 @@ try:
         "--student-name", "N/A",
         "--teacher", "prof_x",
         "--category", "reference_material",
-        "--lang", "deu"
+        "--lang", "deu",
+        "--ocr-dpi", "300"
     ]
     run_docker_exec(PDF_UPLOADER_SERVICE_NAME, stgb_pdf_upload_cmd)
 
