@@ -23,6 +23,7 @@ MONGO_URI = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/
 
 OLLAMA_API_BASE_URL = "http://localhost:11434"
 OLLAMA_EXPECTED_MODEL = "granite3.2-vision:latest"
+GRADING_API_BASE_URL = "http://localhost:5002"  # <-- NEW
 
 
 def serialize_doc(doc):
@@ -188,20 +189,52 @@ def verify_ollama():
         return False
 
 
+def verify_grading_service():  # <-- NEW
+    print("\n--- Verifying Grading Service ---")
+    try:
+        response = requests.get(f"{GRADING_API_BASE_URL}/health", timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        if data.get("status") == "ok":
+            print(f"  [Grading Service] SUCCESS: Health check passed. Message: {data.get('message')}")
+            return True
+        else:
+            print(f"  [Grading Service] FAILURE: Health check status not 'ok'. Response: {data}")
+            return False
+    except requests.exceptions.ConnectionError:
+        print(
+            f"!!! Grading Service Connection Error: Could not connect to {GRADING_API_BASE_URL}. Is the service running? !!!")
+        return False
+    except requests.exceptions.Timeout:
+        print(f"!!! Grading Service Request Timeout: The request to {GRADING_API_BASE_URL}/health timed out. !!!")
+        return False
+    except requests.exceptions.RequestException as e:
+        print(f"!!! Grading Service API Request Failed: {e} !!!")
+        return False
+    except json.JSONDecodeError:
+        print(f"!!! Grading Service API Error: Could not decode JSON response from /health. !!!")
+        return False
+    except Exception as e:
+        print(f"!!! An unexpected error occurred during Grading Service verification: {type(e).__name__}: {e} !!!")
+        return False
+
+
 if __name__ == "__main__":
     print("======== Starting Verification Script ========")
 
     mysql_ok = verify_mysql()
     mongodb_ok = verify_mongodb()
     ollama_ok = verify_ollama()
+    grading_ok = verify_grading_service()  # <-- NEW
 
     print("\n======== Verification Summary ========")
     print(f"MySQL Verification:      {'SUCCESS' if mysql_ok else 'FAILED'}")
     print(f"MongoDB Verification:    {'SUCCESS' if mongodb_ok else 'FAILED'}")
     print(f"Ollama Verification:     {'SUCCESS' if ollama_ok else 'FAILED'}")
+    print(f"Grading Svc Verification:{'SUCCESS' if grading_ok else 'FAILED'}")
     print("======================================")
 
-    if not mysql_ok or not mongodb_ok or not ollama_ok:
+    if not mysql_ok or not mongodb_ok or not ollama_ok or not grading_ok:
         sys.exit(1)
     else:
         sys.exit(0)

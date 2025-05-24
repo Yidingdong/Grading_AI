@@ -69,6 +69,12 @@ services:
         condition: service_started
       registration-service:
         condition: service_healthy
+    healthcheck: # Added healthcheck for consistency
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s # Increased start_period due to DB retries
     command: ["/bin/sh", "-c", "wait-for-it.sh mysql-server:3306 --timeout=60 --strict -- echo '[Course Service] MySQL is up, Registration Service is healthy.' && echo '[Course Service] Starting course allocation application...' && python course_allocation.py"]
 
   pdf-uploader:
@@ -102,6 +108,36 @@ services:
       timeout: 10s
       retries: 5
       start_period: 90s
+
+  grading-service:
+    build:
+      context: .
+      dockerfile: ./grading_service/Dockerfile
+    container_name: grading-service
+    ports:
+      - "5002:5002"
+    networks:
+      - app-network
+    depends_on:
+      mongodb-server:
+        condition: service_started
+      ollama-service:
+        condition: service_healthy
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      /bin/sh -c "
+      wait-for-it.sh mongodb-server:27017 --timeout=60 --strict -- echo '[Grading Service] MongoDB is up.' && \
+      wait-for-it.sh ollama-ai-server:11434 --timeout=120 --strict -- echo '[Grading Service] Ollama server is up.' && \
+      echo '[Grading Service] Starting application...' && \
+      python grading_service.py
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
 volumes:
   mongodb-data:

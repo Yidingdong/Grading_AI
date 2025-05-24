@@ -4,10 +4,12 @@ import json
 import shlex
 import time
 import sys
+import re
 
 USER_API_BASE_URL = "http://localhost:5000"
 COURSE_API_BASE_URL = "http://localhost:5001"
 OLLAMA_API_BASE_URL = "http://localhost:11434"
+GRADING_API_BASE_URL = "http://localhost:5002"
 PDF_UPLOADER_SERVICE_NAME = "pdf-uploader"
 
 MYSQL_CONTAINER = "mysql-server"
@@ -20,6 +22,7 @@ MONGO_PASSWORD = "example"
 MONGO_DB = "Exams"
 
 OLLAMA_TEST_MODEL = "granite3.2-vision:latest"
+LOREM_IPSUM_MONGO_ID = None
 
 
 def wait_for_service(url, service_name, timeout=120, health_path="/health", is_ollama=False):
@@ -96,7 +99,7 @@ def run_docker_exec(service_name, command_args, capture=True):
         raise
 
 
-def make_api_request(method, url, data=None, headers=None):
+def make_api_request(method, url, data=None, headers=None, timeout=30):
     print(f"\n--- Making API Request ---")
     print(f"Method: {method.upper()}")
     print(f"URL: {url}")
@@ -111,11 +114,11 @@ def make_api_request(method, url, data=None, headers=None):
 
     try:
         if method.lower() == 'get':
-            response = requests.get(url, headers=headers, timeout=10)
+            response = requests.get(url, headers=headers, timeout=timeout)
         elif method.lower() == 'post':
-            response = requests.post(url, json=data, headers=headers, timeout=30)
+            response = requests.post(url, json=data, headers=headers, timeout=timeout)
         elif method.lower() == 'put':
-            response = requests.put(url, json=data, headers=headers, timeout=10)
+            response = requests.put(url, json=data, headers=headers, timeout=timeout)
         else:
             print(f"Unsupported HTTP method: {method}")
             return None
@@ -148,10 +151,11 @@ def make_api_request(method, url, data=None, headers=None):
 print("======== Starting Test Script ========")
 
 registration_ready = wait_for_service(USER_API_BASE_URL, "Registration Service")
-course_ready = wait_for_service(COURSE_API_BASE_URL, "Course Allocation Service", health_path="/health")  # UPDATED
+course_ready = wait_for_service(COURSE_API_BASE_URL, "Course Allocation Service", health_path="/health")
 ollama_ready = wait_for_service(OLLAMA_API_BASE_URL, "Ollama AI Service", timeout=600, is_ollama=True)
+grading_ready = wait_for_service(GRADING_API_BASE_URL, "Grading Service", health_path="/health")
 
-if not registration_ready or not course_ready or not ollama_ready:
+if not registration_ready or not course_ready or not ollama_ready or not grading_ready:
     print("\n!!! One or more required services did not become available. Aborting tests. !!!")
     sys.exit(1)
 
@@ -179,7 +183,7 @@ try:
     make_api_request("put", f"{COURSE_API_BASE_URL}/courses/{course_id}/students", assignment_payload)
 
     print("\n=== Step 4: Uploading Lorem Ipsum OCR PDF via Docker Script ===")
-    pdf_upload_cmd = [
+    pdf_upload_cmd_lorem = [
         "python", "pdf_to_mongodb.py",
         "--pdf", "/app/pdfs/Lorem_ipsum_OCR_Version.pdf",
         "--username", "student2",
@@ -190,7 +194,20 @@ try:
         "--category", "answer_sheet",
         "--lang", "eng"
     ]
-    run_docker_exec(PDF_UPLOADER_SERVICE_NAME, pdf_upload_cmd)
+    lorem_upload_result = run_docker_exec(PDF_UPLOADER_SERVICE_NAME, pdf_upload_cmd_lorem)
+    match = re.search(r"Submission ID: ([0-9a-fA-F]+)", lorem_upload_result.stdout)
+    if match:
+        LOREM_IPSUM_MONGO_ID = match.group(1)
+        print(f"Captured Lorem Ipsum MongoDB ID: {LOREM_IPSUM_MONGO_ID}")
+    else:
+        match_err = re.search(r"Submission ID: ([0-9a-fA-F]+)", lorem_upload_result.stderr)
+        if match_err:
+            LOREM_IPSUM_MONGO_ID = match_err.group(1)
+            print(f"Captured Lorem Ipsum MongoDB ID from stderr: {LOREM_IPSUM_MONGO_ID}")
+        else:
+            print("Warning: Could not parse Lorem Ipsum MongoDB ID from pdf_uploader output.")
+            print(f"STDOUT from pdf_uploader: {lorem_upload_result.stdout}")
+            print(f"STDERR from pdf_uploader: {lorem_upload_result.stderr}")
 
     print("\n=== Step 5: Uploading StGB Auszug PDF (Reference Material) ===")
     stgb_pdf_upload_cmd = [
@@ -205,17 +222,29 @@ try:
     ]
     run_docker_exec(PDF_UPLOADER_SERVICE_NAME, stgb_pdf_upload_cmd)
 
-    print("\n=== Step 6: Testing Ollama AI Service ===")
+    print("\n=== Step 6: Testing Ollama AI Service (Directly) ===")
     ollama_payload = {
         "model": OLLAMA_TEST_MODEL,
         "prompt": "What is 2+2?",
         "stream": False
     }
-    ollama_response = make_api_request("post", f"{OLLAMA_API_BASE_URL}/api/generate", data=ollama_payload)
+    ollama_response = make_api_request("post", f"{OLLAMA_API_BASE_URL}/api/generate", data=ollama_payload, timeout=60)
     if ollama_response and ollama_response.json().get("response"):
         print(f"Ollama generated response: {ollama_response.json()['response'][:100]}...")
     else:
         raise ValueError("Ollama did not return a valid response.")
+
+    print("\n=== Step 7: Testing Grading Service ===")
+    if LOREM_IPSUM_MONGO_ID:
+        grading_payload = {"document_id": LOREM_IPSUM_MONGO_ID}
+        grading_response = make_api_request("post", f"{GRADING_API_BASE_URL}/grade_document", data=grading_payload,
+                                            timeout=180)
+        if grading_response and grading_response.json().get("evaluation_result"):
+            print(f"Grading service evaluation: {grading_response.json()['evaluation_result'][:200]}...")
+        else:
+            raise ValueError("Grading service did not return a valid evaluation.")
+    else:
+        print("Skipping Grading Service test as LOREM_IPSUM_MONGO_ID was not captured.")
 
     print("\n=== Test Execution Finished Successfully ===")
     print("=== Run python verify.py to check database state and Ollama model list ===")
