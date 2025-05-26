@@ -3,12 +3,10 @@ import fitz
 from pymongo import MongoClient
 import os
 from datetime import datetime
-import logging # Added for logging
+import logging
 
-# Setup basic logging for when this script is run
-# In a Flask app, app.logger would be used, but for a standalone script, this is fine.
 logger = logging.getLogger(__name__)
-if not logger.handlers: # Avoid adding multiple handlers if script is imported
+if not logger.handlers:
     handler = logging.StreamHandler()
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
@@ -143,7 +141,7 @@ def main():
         inserted_id = store_in_mongodb(submission_data)
         logger.info(f"\n--- Success! ---")
         logger.info(f" PDF processed and data stored in MongoDB.")
-        logger.info(f" Submission ID: {inserted_id}") # This line is important for test.py to parse the ID
+        logger.info(f" Submission ID: {inserted_id}")
 
     except FileNotFoundError as fnf_err:
         logger.error(f"\n!!! Error: {str(fnf_err)} !!!")
