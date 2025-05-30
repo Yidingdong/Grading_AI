@@ -3,3 +3,10 @@ _Documentation
 _Git
 _src
 .dockerignore
+Frontend/grading_ai.db
+Frontend/grading_ai.db-journal # SQLite journal file
+Frontend/__pycache__/
+Frontend/src/__pycache__/
+Frontend/src/courses/__pycache__/
+*.pyc
+secret.txt
