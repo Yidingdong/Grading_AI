@@ -1,5 +1,6 @@
 pymongo==4.3.3
 PyMuPDF==1.22.5
 python-dotenv==0.21.1
-requests>=2.25.1
-mysql-connector-python==8.0.28
+Flask==2.0.3
+Flask-RESTful==0.3.9
+Werkzeug==2.0.3
