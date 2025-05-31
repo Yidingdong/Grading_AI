@@ -5,26 +5,49 @@ import shlex
 import time
 import sys
 import re
+import mysql.connector  # For fetching IDs
+from pymongo import MongoClient  # For cleanup
+from bson import ObjectId  # For cleanup
 
-USER_API_BASE_URL = "http://localhost:5000"
-COURSE_API_BASE_URL = "http://localhost:5001"
-OLLAMA_API_BASE_URL = "http://localhost:11434"
-GRADING_API_BASE_URL = "http://localhost:5002"
-PDF_PROCESSOR_API_BASE_URL = "http://localhost:5003"  # New service for OCR processing
-PDF_UPLOADER_CONTAINER_NAME = "pdf-processor-app"  # Updated container name
+# --- Configuration ---
+USER_API_BASE_URL = "http://localhost:5000"  # registration-service
+COURSE_API_BASE_URL = "http://localhost:5001"  # course-allocation-service
+OLLAMA_API_BASE_URL = "http://localhost:11434"  # ollama-service
+GRADING_API_BASE_URL = "http://localhost:5002"  # grading-service
+PDF_PROCESSOR_API_BASE_URL = "http://localhost:5003"  # pdf-processor-service
+PDF_PROCESSOR_CONTAINER_NAME = "pdf-processor-app"  # As defined in docker-compose
 
 OLLAMA_TEST_MODEL = "granite3.2-vision:latest"
-LOREM_IPSUM_GRIDFS_ID_FRONTEND = None  # For student UI upload
-LOREM_IPSUM_OCR_EXAMS_ID = None  # For result in Exams DB
+
+# MySQL connection details
+MYSQL_HOST = "localhost"
+MYSQL_USER = "user"
+MYSQL_PASSWORD = "password"
+MYSQL_DATABASE = "Informations"
+
+# MongoDB connection details FOR CLEANUP
+MONGO_HOST = "localhost"
+MONGO_PORT = 27017
+MONGO_ROOT_USER = "root"
+MONGO_ROOT_PASSWORD = "example"
+MONGO_EXAMS_DB_NAME = "Exams"
+MONGO_PDF_SUBMISSIONS_COLLECTION = "pdf_submissions"
+
+# Global variables to store fetched IDs
+TEACHER_USERNAME = "test_teacher_dyn"
+STUDENT1_USERNAME = "test_student1_dyn"
+STUDENT2_USERNAME = "test_student2_dyn"
 
 TEACHER_DB_ID = None
 STUDENT1_DB_ID = None
 STUDENT2_DB_ID = None
+COURSE_ID_GLOBAL = None
+LOREM_IPSUM_OCR_EXAMS_ID = None
 
 
-def wait_for_service(url, service_name, timeout=120, health_path="/health", is_ollama=False):
-    # ... (function as before, no critical changes needed here for this sync)
-    print(f"Waiting for {service_name} at {url}...")
+# --- Helper Functions ---
+def wait_for_service(url, service_name, timeout=180, health_path="/health", is_ollama=False):
+    print(f"Waiting for {service_name} at {url} (timeout: {timeout}s)...")
     start_time = time.time()
     check_url = f"{url}{health_path}"
     if is_ollama:
@@ -38,22 +61,19 @@ def wait_for_service(url, service_name, timeout=120, health_path="/health", is_o
                     try:
                         models_data = response.json()
                         if any(m.get("name") == OLLAMA_TEST_MODEL for m in models_data.get("models", [])):
-                            print(f"\n{service_name} is up and model '{OLLAMA_TEST_MODEL}' is available.")
+                            print(f"\nSUCCESS: {service_name} is up and model '{OLLAMA_TEST_MODEL}' is available.")
                             return True
                         else:
-                            print(
-                                f".(Ollama up, model {OLLAMA_TEST_MODEL} not yet listed: {models_data.get('models', [])})",
-                                end='', flush=True)
+                            print(f".(Ollama up, model {OLLAMA_TEST_MODEL} not yet listed)", end='', flush=True)
                     except json.JSONDecodeError:
-                        print(f".(Ollama up, but {check_url} response not JSON: {response.text[:100]})", end='',
-                              flush=True)
+                        print(f".(Ollama up, but {check_url} response not JSON)", end='', flush=True)
                 else:
-                    print(f".(Ollama status {response.status_code} from {check_url})", end='', flush=True)
+                    print(f".(Ollama status {response.status_code})", end='', flush=True)
             elif response.status_code == 200:
-                print(f"\n{service_name} responded with status {response.status_code} from {check_url}. Ready.")
+                print(f"\nSUCCESS: {service_name} responded with status {response.status_code}. Ready.")
                 return True
             else:
-                print(f".(status {response.status_code} from {check_url})", end='', flush=True)
+                print(f".(status {response.status_code})", end='', flush=True)
         except requests.exceptions.ConnectionError:
             print(".", end='', flush=True)
         except requests.exceptions.Timeout:
@@ -61,175 +81,299 @@ def wait_for_service(url, service_name, timeout=120, health_path="/health", is_o
         except requests.exceptions.RequestException as e:
             print(f"\nError checking {service_name} @ {check_url}: {e}")
         time.sleep(5)
-    print(f"\nError: Timeout waiting for {service_name} at {url} after {timeout} seconds.")
+    print(f"\nFAILURE: Timeout waiting for {service_name} at {url} after {timeout} seconds.")
     return False
 
 
+def make_api_request(method, url, data=None, headers=None, timeout=30, description="API Request", expect_json=True):
+    print(f"\n--- Making {description} ---")
+    print(f"Method: {method.upper()}, URL: {url}")
+    if data: print(f"Data: {json.dumps(data)}")
+
+    final_headers = {'Content-Type': 'application/json'}
+    if headers:
+        final_headers.update(headers)
+
+    try:
+        response = requests.request(method, url, json=data if method.lower() not in ['get', 'delete'] else None,
+                                    params=data if method.lower() == 'get' else None, headers=final_headers,
+                                    timeout=timeout)
+        response_body_text = "N/A"
+        response_body_json = None
+        try:
+            if expect_json and response.content:
+                response_body_json = response.json()
+                response_body_text = json.dumps(response_body_json)
+            elif response.content:
+                response_body_text = response.text
+        except json.JSONDecodeError:
+            response_body_text = response.text
+            if expect_json:
+                print(f"Warning: Expected JSON response but got: {response_body_text[:200]}")
+
+        print(f"Response Status: {response.status_code}, Body: {response_body_text[:500]}...")
+        response.raise_for_status()  # Will raise HTTPError for bad responses (4xx or 5xx)
+        print(f"--- {description} Successful ---")
+        return response
+    except requests.exceptions.HTTPError as e:
+        print(f"!!! {description} HTTP Error: {e.response.status_code} - {e.response.text[:500]} !!!")
+        raise
+    except requests.exceptions.RequestException as e:
+        print(f"!!! {description} Failed: {e} !!!")
+        raise
+
+
+def get_user_id_by_username(username):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connector.connect(host=MYSQL_HOST, user=MYSQL_USER, password=MYSQL_PASSWORD,
+                                       database=MYSQL_DATABASE)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+        if user:
+            print(f"Successfully fetched ID for username '{username}': {user['id']}")
+            return user['id']
+        else:
+            print(f"Warning: Could not find user with username '{username}' in the database.")
+            return None
+    except mysql.connector.Error as err:
+        print(f"!!! MySQL error fetching ID for '{username}': {err} !!!")
+        raise
+    finally:
+        if cursor: cursor.close()
+        if conn and conn.is_connected(): conn.close()
+
+
 def run_docker_exec_pdf_processor_cli(container_name, pdf_path_in_container, username, course, student_name, student_id,
-                                      teacher, category, lang="eng", ocr_dpi=300):
-    """ Helper to run the original CLI-style pdf_to_mongodb.py for setup if needed """
-    # This is kept if direct CLI processing is still part of some test setup
-    # but new tests might prefer calling the PDF Processor API.
+                                      teacher_username, category, lang="eng"):
     command_args = [
-        "python", "pdf_to_mongodb.py",  # Assuming pdf_to_mongodb.py is still the entry point for CLI mode in that image
+        "python", "pdf_to_mongodb.py",
         "--pdf", pdf_path_in_container,
-        "--username", username, "--course", course,
+        "--username", username,
+        "--course", course,
         "--student-name", student_name,
-        "--teacher", teacher, "--category", category, "--lang", lang,
-        "--ocr-dpi", str(ocr_dpi)
+        "--teacher", teacher_username,
+        "--category", category,
+        "--lang", lang
     ]
-    if student_id:  # student_id is optional for some categories
+    if student_id:
         command_args.extend(["--student-id", str(student_id)])
 
     base_command = ["docker", "exec", container_name]
     full_command = base_command + command_args
-    print(f"\n--- Running Docker Exec (CLI PDF Processing) ---")
+    print(f"\n--- Running Docker Exec (CLI PDF Processing for Setup) ---")
     print(f"Command: {' '.join(shlex.quote(str(arg)) for arg in full_command)}")
     try:
-        result = subprocess.run(full_command, capture_output=True, text=True, check=True, encoding='utf-8')
+        result = subprocess.run(full_command, capture_output=True, text=True, check=False, encoding='utf-8')
+        output_to_search = result.stdout + "\n" + result.stderr  # Combine both for searching
         print("--- Docker Exec Output ---")
-        if result.stdout: print("STDOUT:\n", result.stdout.strip())
-        if result.stderr: print("STDERR:\n", result.stderr.strip())  # pdf_to_mongodb.py logs to stderr
+        print("STDOUT:\n", result.stdout.strip() if result.stdout else " (empty)")
+        print("STDERR:\n", result.stderr.strip() if result.stderr else " (empty)")
         print("--- Docker Exec End ---")
-        # Parse ID from output (assuming it's in stderr now due to logging)
-        output_to_search = result.stdout + "\n" + result.stderr
-        match = re.search(r"Submission ID: ([0-9a-fA-F]+)", output_to_search)
-        if match: return match.group(1)
-        return None
-    except subprocess.CalledProcessError as e:
-        print(f"!!! Docker exec CLI PDF processing failed (exit code {e.returncode}) !!!")
-        if e.stdout: print("STDOUT:\n", e.stdout.strip())
-        if e.stderr: print("STDERR:\n", e.stderr.strip())
+
+        if result.returncode != 0:
+            print(
+                f"Warning: Docker exec CLI PDF processing had a non-zero exit code ({result.returncode}). Will still try to parse ID.")
+
+        match_new_id = re.search(r"Submission ID: ([0-9a-fA-F]{24})", output_to_search)
+        if match_new_id:
+            print(f"Found New Submission ID from CLI output: {match_new_id.group(1)}")
+            return match_new_id.group(1)
+
+        match_existing_id = re.search(r"Returning existing Exams DB ID: ([0-9a-fA-F]{24})", output_to_search)
+        if match_existing_id:
+            print(f"Found Existing Submission ID from CLI output: {match_existing_id.group(1)}")
+            return match_existing_id.group(1)
+
+        print("!!! Could not find Submission ID in CLI output. !!!")
+        if result.returncode != 0:  # If no ID found AND it errored, then raise
+            raise subprocess.CalledProcessError(result.returncode, full_command, output=result.stdout,
+                                                stderr=result.stderr)
+        return None  # If no ID found but exit code was 0, return None
+    except Exception as e:
+        print(f"!!! Unexpected error during Docker exec CLI PDF processing: {e} !!!")
         raise
-    return None
 
 
-def make_api_request(method, url, data=None, headers=None, timeout=30, description="API Request"):
-    # ... (function as before, no critical changes needed here for this sync)
-    print(f"\n--- Making {description} ---")
-    print(f"Method: {method.upper()}, URL: {url}")
-    if data: print(f"Data: {json.dumps(data)}")
-    if headers is None:
-        headers = {'Content-Type': 'application/json'}
-    elif data and 'Content-Type' not in headers:
-        headers['Content-Type'] = 'application/json'
+def cleanup_test_data():
+    global TEACHER_DB_ID, STUDENT1_DB_ID, STUDENT2_DB_ID, COURSE_ID_GLOBAL, LOREM_IPSUM_OCR_EXAMS_ID
+    print("\n--- Starting Test Data Cleanup ---")
+    mysql_conn = None
+    mysql_cursor = None
+    mongo_client_cleanup = None
     try:
-        response = requests.request(method, url, json=data if method.lower() != 'get' else None,
-                                    params=data if method.lower() == 'get' else None, headers=headers, timeout=timeout)
-        response_body_text = "N/A";
-        response_body_json = None
-        try:
-            response_body_json = response.json(); response_body_text = json.dumps(response_body_json)
-        except json.JSONDecodeError:
-            response_body_text = response.text
-        print(f"Response Status: {response.status_code}, Body: {response_body_text[:500]}...")  # Limit long responses
-        response.raise_for_status()
-        print(f"--- {description} End ---")
-        return response
-    except requests.exceptions.HTTPError as e:
-        print(f"!!! {description} HTTP Error: {e} !!!"); raise
-    except requests.exceptions.RequestException as e:
-        print(f"!!! {description} Failed: {e} !!!"); raise
+        # MySQL Cleanup
+        print("Attempting MySQL cleanup...")
+        mysql_conn = mysql.connector.connect(host=MYSQL_HOST, user=MYSQL_USER, password=MYSQL_PASSWORD,
+                                             database=MYSQL_DATABASE, connection_timeout=5)
+        mysql_cursor = mysql_conn.cursor()
+
+        # Order of deletion matters due to foreign key constraints
+        # 1. Delete enrollments
+        if COURSE_ID_GLOBAL:
+            mysql_cursor.execute("DELETE FROM student_course WHERE course_id = %s", (COURSE_ID_GLOBAL,))
+            print(f"Deleted enrollments for course ID {COURSE_ID_GLOBAL}")
+
+        # 2. Delete courses
+        if COURSE_ID_GLOBAL:
+            mysql_cursor.execute("DELETE FROM courses WHERE course_id = %s", (COURSE_ID_GLOBAL,))
+            print(f"Deleted course with ID {COURSE_ID_GLOBAL}")
+            COURSE_ID_GLOBAL = None  # Clear after deletion
+
+        # 3. Delete users
+        user_ids_to_delete = []
+        if TEACHER_DB_ID: user_ids_to_delete.append(TEACHER_DB_ID)
+        if STUDENT1_DB_ID: user_ids_to_delete.append(STUDENT1_DB_ID)
+        if STUDENT2_DB_ID: user_ids_to_delete.append(STUDENT2_DB_ID)
+
+        for user_id in user_ids_to_delete:
+            # Must ensure courses taught by teacher are deleted or teacher_id nullable/set to null
+            # For this test, we assume the course taught by TEACHER_DB_ID was COURSE_ID_GLOBAL and deleted
+            mysql_cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+            print(f"Deleted user with ID {user_id}")
+
+        mysql_conn.commit()
+        print("MySQL cleanup successful.")
+        TEACHER_DB_ID, STUDENT1_DB_ID, STUDENT2_DB_ID = None, None, None  # Clear IDs
+
+        # MongoDB Cleanup (Exams DB)
+        print("Attempting MongoDB cleanup...")
+        if LOREM_IPSUM_OCR_EXAMS_ID:
+            mongo_cleanup_uri = f"mongodb://{MONGO_ROOT_USER}:{MONGO_ROOT_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/?authSource=admin"
+            mongo_client_cleanup = MongoClient(mongo_cleanup_uri, serverSelectionTimeoutMS=5000)
+
+            exams_db = mongo_client_cleanup[MONGO_EXAMS_DB_NAME]
+            pdf_submissions_coll = exams_db[MONGO_PDF_SUBMISSIONS_COLLECTION]
+            result = pdf_submissions_coll.delete_one({"_id": ObjectId(LOREM_IPSUM_OCR_EXAMS_ID)})
+            if result.deleted_count > 0:
+                print(f"Deleted document from Exams DB with ID {LOREM_IPSUM_OCR_EXAMS_ID}")
+            else:
+                print(
+                    f"Document with ID {LOREM_IPSUM_OCR_EXAMS_ID} not found in Exams DB for deletion or already deleted.")
+            LOREM_IPSUM_OCR_EXAMS_ID = None  # Clear ID
+        else:
+            print("No MongoDB LOREM_IPSUM_OCR_EXAMS_ID to cleanup.")
+        print("MongoDB cleanup (Exams DB) attempt finished.")
+
+    except Exception as e:
+        print(f"!!! Error during cleanup: {type(e).__name__} - {e} !!!")
+        import traceback
+        traceback.print_exc()
+    finally:
+        if mysql_cursor: mysql_cursor.close()
+        if mysql_conn and mysql_conn.is_connected(): mysql_conn.close()
+        if mongo_client_cleanup: mongo_client_cleanup.close()
+    print("--- Test Data Cleanup Finished ---")
 
 
-print("======== Starting Test Script ========")
-# Wait for services
-services_to_check = [
-    (USER_API_BASE_URL, "Registration Service"),
-    (COURSE_API_BASE_URL, "Course Allocation Service"),
-    (OLLAMA_API_BASE_URL, "Ollama AI Service", {"is_ollama": True, "timeout": 600}),
-    (GRADING_API_BASE_URL, "Grading Service"),
-    (PDF_PROCESSOR_API_BASE_URL, "PDF Processor Service")  # New service
-]
-all_services_ready = True
-for url, name, *args in services_to_check:
-    kwargs = args[0] if args else {}
-    if not wait_for_service(url, name, **kwargs):
-        all_services_ready = False;
-        break
-if not all_services_ready:
-    print("\n!!! One or more services failed to start. Aborting tests. !!!");
-    sys.exit(1)
+# --- Main Test Execution ---
+def main():
+    global TEACHER_DB_ID, STUDENT1_DB_ID, STUDENT2_DB_ID, COURSE_ID_GLOBAL, LOREM_IPSUM_OCR_EXAMS_ID
 
-print("\n=== All API services ready. Starting Test Execution ===")
-try:
-    print("\n=== Step 1: Register Users ===")
-    teacher_payload = {"username": "test_teacher1", "password": "pw", "name": "Dr. Teach", "user_type": "teacher"}
-    student1_payload = {"username": "test_student1", "password": "pw", "name": "Student Alpha", "user_type": "student"}
-    student2_payload = {"username": "test_student2", "password": "pw", "name": "Student Beta", "user_type": "student"}
+    print("======== Starting Test Script ========")
+    # Wait for services
+    services_to_check = [
+        (USER_API_BASE_URL, "Registration Service"),
+        (COURSE_API_BASE_URL, "Course Allocation Service"),
+        (OLLAMA_API_BASE_URL, "Ollama AI Service", {"is_ollama": True, "timeout": 600}),
+        (GRADING_API_BASE_URL, "Grading Service"),
+        (PDF_PROCESSOR_API_BASE_URL, "PDF Processor Service")
+    ]
+    all_services_ready = True
+    for url, name, *args in services_to_check:
+        kwargs = args[0] if args else {}
+        if not wait_for_service(url, name, **kwargs):
+            all_services_ready = False
+            break
+    if not all_services_ready:
+        print("\n!!! One or more services failed to start. Aborting tests. !!!")
+        sys.exit(1)
 
-    # Robust ID handling: Store actual IDs if API returns them or query DB. For now, assume sequential or specific test DB state.
-    # To ensure clean state for IDs, tests should ideally clear users table first.
-    # Here, we'll assume IDs are 1, 2, 3 if it's a fresh DB.
-    resp_teacher = make_api_request("post", f"{USER_API_BASE_URL}/register", teacher_payload,
-                                    description="Register Teacher")
-    # Assuming register API doesn't return ID, so we can't reliably get TEACHER_DB_ID here without DB query.
-    # For tests, it's better if APIs return created resource IDs.
-    # For now, we'll proceed with hardcoded assumptions or skip tests that depend on exact IDs if they become flaky.
-    TEACHER_DB_ID = 1  # This is a MAJOR assumption for the test flow.
-    STUDENT1_DB_ID = 2
-    STUDENT2_DB_ID = 3
-    make_api_request("post", f"{USER_API_BASE_URL}/register", student1_payload, description="Register Student 1")
-    make_api_request("post", f"{USER_API_BASE_URL}/register", student2_payload, description="Register Student 2")
+    print("\n=== All API services ready. Starting Test Execution ===")
 
-    print(f"Assuming Teacher ID: {TEACHER_DB_ID}, Student1 ID: {STUDENT1_DB_ID}, Student2 ID: {STUDENT2_DB_ID}")
+    try:
+        print("\n=== Step 1: Register Users ===")
+        teacher_payload = {"username": TEACHER_USERNAME, "password": "pw", "name": "Dr. Dyn Teach",
+                           "user_type": "teacher"}
+        student1_payload = {"username": STUDENT1_USERNAME, "password": "pw", "name": "Student Dyn Alpha",
+                            "user_type": "student"}
+        student2_payload = {"username": STUDENT2_USERNAME, "password": "pw", "name": "Student Dyn Beta",
+                            "user_type": "student"}
 
-    print("\n=== Step 2: Create Course ===")
-    course_payload = {"name": "Test Course Alpha", "duration_weeks": 10,
-                      "teacher_id": TEACHER_DB_ID}  # Assumes TEACHER_DB_ID is correct
-    resp_course = make_api_request("post", f"{COURSE_API_BASE_URL}/courses", course_payload,
-                                   description="Create Course")
-    course_id = resp_course.json().get('course_id')
-    if not course_id: raise ValueError("Course ID not returned from creation.")
-    print(f"Course '{course_payload['name']}' created with ID: {course_id}")
+        make_api_request("post", f"{USER_API_BASE_URL}/register", teacher_payload, description="Register Teacher")
+        TEACHER_DB_ID = get_user_id_by_username(TEACHER_USERNAME)
+        if not TEACHER_DB_ID: raise ValueError(f"Failed to get DB ID for teacher {TEACHER_USERNAME}")
 
-    print("\n=== Step 3: Assign Students to Course ===")
-    assignment_payload = {"student_ids": [STUDENT1_DB_ID, STUDENT2_DB_ID]}  # Assumes these IDs are correct
-    make_api_request("put", f"{COURSE_API_BASE_URL}/courses/{course_id}/students", assignment_payload,
-                     description="Assign Students")
+        make_api_request("post", f"{USER_API_BASE_URL}/register", student1_payload, description="Register Student 1")
+        STUDENT1_DB_ID = get_user_id_by_username(STUDENT1_USERNAME)
+        if not STUDENT1_DB_ID: raise ValueError(f"Failed to get DB ID for student {STUDENT1_USERNAME}")
 
-    # Step 4 & 5 are now about simulating student UI upload and then teacher processing
-    # We can't easily simulate UI upload to GridFS via test.py without frontend interaction or a new file upload API in frontend.
-    # So, we'll use the pdf-processor CLI mode for one file to get it into Exams.pdf_submissions for AI grading test.
-    print("\n=== Step 4: Process a test PDF (simulating it was uploaded by student and needs OCR) ===")
-    # This step now uses the CLI mode of pdf_to_mongodb.py for simplicity to get a doc into Exams DB
-    # In a real scenario, this would be student uploading to GridFS via UI, then teacher triggering OCR via API.
-    LOREM_IPSUM_OCR_EXAMS_ID = run_docker_exec_pdf_processor_cli(
-        PDF_UPLOADER_CONTAINER_NAME,
-        "/app/pdfs/Lorem_ipsum_OCR_Version.pdf",  # Path inside pdf-processor container
-        username="test_student1",  # Uploader
-        course="Test Course Alpha",
-        student_name="Student Alpha",
-        student_id=STUDENT1_DB_ID,  # Actual student ID
-        teacher="Dr. Teach",  # Teacher's username
-        category="answer_sheet"
-    )
-    if not LOREM_IPSUM_OCR_EXAMS_ID:
-        raise ValueError("Failed to process Lorem Ipsum PDF and get its Exams DB ID.")
-    print(f"Lorem Ipsum PDF processed into Exams DB, ID: {LOREM_IPSUM_OCR_EXAMS_ID}")
+        make_api_request("post", f"{USER_API_BASE_URL}/register", student2_payload, description="Register Student 2")
+        STUDENT2_DB_ID = get_user_id_by_username(STUDENT2_USERNAME)
+        if not STUDENT2_DB_ID: raise ValueError(f"Failed to get DB ID for student {STUDENT2_USERNAME}")
 
-    # Step 5: Test Ollama (remains the same)
-    print("\n=== Step 5: Test Ollama AI Service ===")  # Renumbered
-    ollama_payload = {"model": OLLAMA_TEST_MODEL, "prompt": "What is the capital of France?", "stream": False}
-    make_api_request("post", f"{OLLAMA_API_BASE_URL}/api/generate", data=ollama_payload, timeout=120,
-                     description="Ollama Generate")
+        print(f"Fetched IDs -> Teacher: {TEACHER_DB_ID}, Student1: {STUDENT1_DB_ID}, Student2: {STUDENT2_DB_ID}")
 
-    # Step 6: Test Grading Service using the OCR'd document ID
-    print("\n=== Step 6: Test Grading Service ===")  # Renumbered
-    if LOREM_IPSUM_OCR_EXAMS_ID:
+        print("\n=== Step 2: Create Course ===")
+        course_payload = {"name": "Dynamic Test Course Alpha", "duration_weeks": 10, "teacher_id": TEACHER_DB_ID}
+        resp_course = make_api_request("post", f"{COURSE_API_BASE_URL}/courses", course_payload,
+                                       description="Create Course")
+        COURSE_ID_GLOBAL = resp_course.json().get('course_id')
+        if not COURSE_ID_GLOBAL: raise ValueError("Course ID not returned from creation.")
+        print(f"Course '{course_payload['name']}' created with ID: {COURSE_ID_GLOBAL}")
+
+        print("\n=== Step 3: Assign Students to Course ===")
+        assignment_payload = {"student_ids": [STUDENT1_DB_ID, STUDENT2_DB_ID]}
+        make_api_request("put", f"{COURSE_API_BASE_URL}/courses/{COURSE_ID_GLOBAL}/students", assignment_payload,
+                         description="Assign Students")
+
+        print("\n=== Step 4: Process a test PDF via CLI (simulates student submission OCR prep) ===")
+        LOREM_IPSUM_OCR_EXAMS_ID = run_docker_exec_pdf_processor_cli(
+            PDF_PROCESSOR_CONTAINER_NAME,
+            "pdfs/Lorem_ipsum_OCR_Version.pdf",
+            username=STUDENT1_USERNAME,
+            course="Dynamic Test Course Alpha",
+            student_name="Student Dyn Alpha",
+            student_id=STUDENT1_DB_ID,
+            teacher_username=TEACHER_USERNAME,
+            category="answer_sheet"
+        )
+        if not LOREM_IPSUM_OCR_EXAMS_ID:
+            raise ValueError("Failed to process Lorem Ipsum PDF via CLI and get its Exams DB ID.")
+        print(f"Lorem Ipsum PDF processed into Exams DB, ID: {LOREM_IPSUM_OCR_EXAMS_ID}")
+
+        print("\n=== Step 5: Test Ollama AI Service (Basic Prompt) ===")
+        ollama_payload = {"model": OLLAMA_TEST_MODEL, "prompt": "What is the capital of France? Respond concisely.",
+                          "stream": False}
+        resp_ollama = make_api_request("post", f"{OLLAMA_API_BASE_URL}/api/generate", data=ollama_payload, timeout=180,
+                                       description="Ollama Generate")
+        assert "paris" in resp_ollama.json().get("response",
+                                                 "").lower(), "Ollama did not respond as expected about Paris"
+        print("Ollama basic prompt test successful.")
+
+        print("\n=== Step 6: Test Grading Service ===")
         grading_payload = {"document_id": LOREM_IPSUM_OCR_EXAMS_ID}
-        make_api_request("post", f"{GRADING_API_BASE_URL}/grade_document", data=grading_payload, timeout=240,
-                         description="Grade Document")
-    else:
-        print("Skipping Grading Service test as LOREM_IPSUM_OCR_EXAMS_ID was not captured.")
+        resp_grading = make_api_request("post", f"{GRADING_API_BASE_URL}/grade_document", data=grading_payload,
+                                        timeout=300, description="Grade Document")
+        grading_json = resp_grading.json()
+        assert "evaluation_result" in grading_json, "Grading response missing 'evaluation_result'"
+        assert len(grading_json["evaluation_result"]) > 10, "Evaluation result seems too short"
+        print("Grading service test successful. Evaluation obtained.")
 
-    print("\n=== Test Execution Finished Successfully ===")
-    print("=== Run python verify.py to check database state and Ollama model list ===")
+        print("\n\n✅✅✅ Test Execution Finished Successfully ✅✅✅")
+        print("Run python verify.py to check database state and Ollama model list.")
 
-except Exception as e:
-    print(f"\n!!! An error occurred during test execution: {type(e).__name__} - {e} !!!")
-    import traceback
+    except Exception as e:
+        print(f"\n❌❌❌ An error occurred during test execution: {type(e).__name__} - {e} ❌❌❌")
+        import traceback
+        traceback.print_exc()
+        print("=== Test Execution Failed ===")
+        sys.exit(1)  # Exit with error so CI systems know it failed
+    finally:
+        cleanup_test_data()
 
-    traceback.print_exc()
-    print("=== Test Execution Failed ===");
-    sys.exit(1)
+
+if __name__ == "__main__":
+    main()

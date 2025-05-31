@@ -58,5 +58,4 @@ try:
 except Exception as e:
     st.error(f"An error occurred while retrieving your course summary: {e}")
 finally:
-    # session.close() # Usually not needed here for Streamlit's typical session model
     pass

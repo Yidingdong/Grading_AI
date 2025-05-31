@@ -84,7 +84,7 @@ def create_courses_tables():
                     is_active BOOLEAN DEFAULT TRUE,
                     FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE 
                 )
-                ''', # Added ON DELETE CASCADE for teacher_id
+                ''',
                 '''
                 CREATE TABLE IF NOT EXISTS student_course (
                     enrollment_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -95,7 +95,7 @@ def create_courses_tables():
                     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE, 
                     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
                 )
-                ''' # Added ON DELETE CASCADE for student_id and course_id
+                '''
             ]
             for stmt in ddl_statements:
                 cursor.execute(stmt)

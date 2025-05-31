@@ -1,25 +1,51 @@
-# Tutorial
 
-This is a tutorial to run, test, and verify the backend of the grading app.
+# Grading AI System
 
-## Steps to Run
 
-1. Run in a terminal when in the Directory this Project is.
+## Running the Application
+
+1.  **Build and Start Services:**
+    From the project root directory:
+    ```bash
+    docker compose up --build -d
+    ```
+    *(This builds images and starts all services in the background.)*
+
+2.  **Access Frontend:**
+    Open [http://localhost:8080](http://localhost:8080) in your browser.
+    *(Initial startup may take a few minutes.)*
+
+## Running Integration Tests
+
+Ensure the application is running.
+
+1.  **Navigate to Tests Directory:**
+    ```bash
+    cd tests
+    ```
+
+2.  **Execute Main Test Script:**
+    *(Registers users, creates courses, processes PDF, tests grading, and cleans up.)*
+    ```bash
+    python test.py
+    ```
+
+3.  **Execute Verification Script:**
+    *(Checks service health and confirms test data cleanup.)*
+    ```bash
+    python verify.py
+    ```
+
+## Stopping and Cleaning Up
+
+From the project root directory:
 
 ```bash
-docker compose up --build -d
-``` 
-2. do the following:
-```bash
-cd tests
-python test.py
+docker compose down -v
 ```
-3. Then wait until execution is finished
-4. Then run 
-```bash
-python verify.py
-```
-5. When composing down, run 
+*(Stops containers and removes volumes, deleting all data.)*
+
+To also remove built images:
 ```bash
 docker compose down -v --rmi all
 ```
