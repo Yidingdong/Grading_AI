@@ -122,25 +122,6 @@ services:
       retries: 5
       start_period: 30s
 
-  ollama-service:
-    build:
-      context: .
-      dockerfile: ./ollama_service/Dockerfile
-    container_name: ollama-ai-server
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama-data:/root/.ollama
-    networks:
-      - app-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:11434/api/tags || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 90s
-
   grading-service:
     build:
       context: .
@@ -153,16 +134,15 @@ services:
     depends_on:
       mongodb-server:
         condition: service_healthy
-      ollama-service:
-        condition: service_healthy
       pdf-processor-service:
         condition: service_healthy
     environment:
       - PYTHONUNBUFFERED=1
+      - SEEDBOX_API_BASE_URL=https://api.seedbox.ai/v1
+      - SEEDBOX_CHAT_MODEL=gpt-4o-mini
     command: >
       /bin/sh -c "
       wait-for-it.sh mongodb-server:27017 --timeout=60 --strict -- echo '[Grading Service] MongoDB is up.' && \
-      wait-for-it.sh ollama-ai-server:11434 --timeout=120 --strict -- echo '[Grading Service] Ollama server is up.' && \
       wait-for-it.sh pdf-processor-service:5003 --timeout=60 --strict -- echo '[Grading Service] PDF Processor service is up.' && \
       echo '[Grading Service] Starting application...' && \
       python grading_service.py
@@ -205,7 +185,6 @@ services:
 volumes:
   mongodb-data:
   mysql-data:
-  ollama-data:
 
 networks:
   app-network:
