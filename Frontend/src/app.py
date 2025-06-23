@@ -318,6 +318,10 @@ def _generate_teacher_course_page_layout(course_obj):
                                                                                          key=f"dl_ans_{meta_id_str}")
                                 except:
                                     st.caption("DL Err")
+                        with sub_cols[1]:  
+                            if st.button("Delete Submission", key=f"del_ans_{meta_id_str}", type="secondary"):
+                                if delete_file_from_gridfs_and_metadata(sub_meta['_id'], gridfs_id):
+                                    st.rerun()
         if not any_ui_submissions_found:
             st.info("No student answer sheets have been submitted (via UI) for this course yet.")
 
