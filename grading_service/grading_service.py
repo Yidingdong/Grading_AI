@@ -17,11 +17,9 @@ MONGO_URI = "mongodb://root:example@mongodb-server:27017/?authSource=admin"
 MONGO_DB_NAME = "Exams"
 MONGO_COLLECTION_NAME = "pdf_submissions"
 
-# Configuration for Seedbox AI API from environment variables
-SEEDBOX_API_BASE_URL = os.getenv("SEEDBOX_API_BASE_URL", "https://api.seedbox.ai")
+DEFAULT_API_BASE_URL = os.getenv("SEEDBOX_API_BASE_URL", "https://api.seedbox.ai")
 SEEDBOX_CHAT_MODEL = os.getenv("SEEDBOX_CHAT_MODEL", "gpt-4o-mini")
 
-# Define the weights for each grading category
 GRADING_WEIGHTS = {
     "relevance_accuracy": 0.70,
     "reference_material": 0.10,
@@ -29,22 +27,20 @@ GRADING_WEIGHTS = {
     "logical_structure": 0.10,
 }
 
-# --- Read API Key from Docker Secret ---
-api_key = None
+# --- Default API Key Reading ---
+default_api_key = None
 try:
     with open('/run/secrets/apikey', 'r') as f:
-        api_key = f.read().strip()
+        default_api_key = f.read().strip()
 except IOError:
     app.logger.error("Could not read API key from Docker secret file. Falling back to env var.")
-    api_key = os.getenv("SEEDBOX_API_KEY")
+    default_api_key = os.getenv("SEEDBOX_API_KEY")
 
-if not api_key:
-    app.logger.warning("API key is NOT configured. Grading service API calls will fail.")
-
-# --- OpenAI Client Initialization ---
-client = OpenAI(
-    base_url=SEEDBOX_API_BASE_URL,
-    api_key=api_key
+# --- Default OpenAI Client Initialization ---
+# This client will be used if no custom credentials are provided in the request.
+default_client = OpenAI(
+    base_url=DEFAULT_API_BASE_URL,
+    api_key=default_api_key
 )
 
 # --- Logging and DB Connection ---
@@ -56,6 +52,7 @@ if not app.debug and not app.testing:
     app.logger.setLevel(logging.INFO)
 
 mongo_client = None
+
 
 def get_mongo_client():
     global mongo_client
@@ -72,19 +69,38 @@ def get_mongo_client():
             raise
     return mongo_client
 
+
 class GradeDocument(Resource):
     def post(self):
         data = request.get_json()
         if not data or 'document_id' not in data:
-            return {'message': 'Missing document_id (for student answer sheet)'}, 400
+            return {'message': 'Missing document_id'}, 400
 
+        # --- MODIFIED: Handle custom or default API configuration ---
+        custom_api_url = data.get("custom_api_url")
+        custom_api_key = data.get("custom_api_key")
+
+        request_client = None
+        if custom_api_url and custom_api_key:
+            app.logger.info(f"Using custom API configuration for this request: URL={custom_api_url}")
+            try:
+                # Create a temporary, request-specific client
+                request_client = OpenAI(base_url=custom_api_url, api_key=custom_api_key)
+            except Exception as e:
+                app.logger.error(f"Failed to initialize custom OpenAI client: {e}")
+                return {'message': f'Invalid custom API configuration: {e}'}, 400
+        else:
+            app.logger.info("Using default system API configuration.")
+            request_client = default_client
+
+        if not (request_client and request_client.api_key):
+            app.logger.error("API key is NOT configured for the selected client (default or custom).")
+            return {'message': 'Grading service is not configured with an API key.'}, 503
+
+        # --- Document fetching and prompt generation ---
         student_answer_doc_id_str = data['document_id']
         try:
             student_answer_doc_oid = ObjectId(student_answer_doc_id_str)
-        except Exception:
-            return {'message': f'Invalid student_answer_doc_id format: {student_answer_doc_id_str}'}, 400
-
-        try:
             mongo_conn = get_mongo_client()
             db = mongo_conn[MONGO_DB_NAME]
             collection = db[MONGO_COLLECTION_NAME]
@@ -98,21 +114,17 @@ class GradeDocument(Resource):
             if not course_id:
                 return {'message': 'Missing "course_id" in student answer sheet metadata'}, 400
 
-            qp_doc = collection.find_one(
-                {"course_id": course_id, "category": "question_paper"},
-                sort=[("processing_timestamp", -1)]
-            )
-            ref_doc = collection.find_one(
-                {"course_id": course_id, "category": "reference_material"},
-                sort=[("processing_timestamp", -1)]
-            )
-            question_paper_content = qp_doc.get("content", "No question paper content was available.") if qp_doc else "No question paper found for this course."
-            reference_material_content = ref_doc.get("content", "No reference material content was available.") if ref_doc else "No reference material found for this course."
+            qp_doc = collection.find_one({"course_id": course_id, "category": "question_paper"},
+                                         sort=[("processing_timestamp", -1)])
+            ref_doc = collection.find_one({"course_id": course_id, "category": "reference_material"},
+                                          sort=[("processing_timestamp", -1)])
+            question_paper_content = qp_doc.get("content",
+                                                "No question paper content was available.") if qp_doc else "No question paper found for this course."
+            reference_material_content = ref_doc.get("content",
+                                                     "No reference material content was available.") if ref_doc else "No reference material found for this course."
         except pymongo_errors.PyMongoError as e:
-            app.logger.error(f"MongoDB error fetching documents: {e}")
             return {'message': f'MongoDB error: {e}'}, 500
         except Exception as e:
-            app.logger.error(f"Unexpected error fetching documents: {e}", exc_info=True)
             return {'message': 'Unexpected internal error'}, 500
 
         prompt_content = f"""You are an expert AI grading assistant. Your task is to evaluate the student's answer sheet based on the provided question paper and reference material.
@@ -140,51 +152,29 @@ Provide a detailed justification for each criterion and a numerical score from 0
 
 JSON RESPONSE FORMAT:
 {{
-  "relevance_accuracy": {{
-    "score": <integer from 0-100>,
-    "justification": "<Detailed justification and observations for this category.>"
-  }},
-  "reference_material": {{
-    "score": <integer from 0-100>,
-    "justification": "<Detailed justification and observations for this category.>"
-  }},
-  "grammar_word_choice": {{
-    "score": <integer from 0-100>,
-    "justification": "<Detailed justification and observations for this category.>"
-  }},
-  "logical_structure": {{
-    "score": <integer from 0-100>,
-    "justification": "<Detailed justification and observations for this category.>"
-  }}
+  "relevance_accuracy": {{ "score": <integer>, "justification": "<string>" }},
+  "reference_material": {{ "score": <integer>, "justification": "<string>" }},
+  "grammar_word_choice": {{ "score": <integer>, "justification": "<string>" }},
+  "logical_structure": {{ "score": <integer>, "justification": "<string>" }}
 }}
 """
-        try:
-            if not api_key:
-                app.logger.error("Cannot make API call: Seedbox API key is not configured.")
-                return {'message': 'Grading service is not configured with an API key.'}, 503
 
-            app.logger.info(f"Sending prompt to model '{SEEDBOX_CHAT_MODEL}' for student answer {student_answer_doc_id_str}")
-            chat_completion = client.chat.completions.create(
+        # --- AI API call and response handling ---
+        try:
+            chat_completion = request_client.chat.completions.create(
                 model=SEEDBOX_CHAT_MODEL,
                 messages=[{"role": "user", "content": prompt_content}],
                 response_format={"type": "json_object"}
             )
             ai_response_str = chat_completion.choices[0].message.content
-            app.logger.info(f"Received raw JSON response for {student_answer_doc_id_str}")
+            ai_data = json.loads(ai_response_str)
 
-            try:
-                ai_data = json.loads(ai_response_str)
-            except json.JSONDecodeError:
-                app.logger.error(f"Failed to decode AI JSON response for {student_answer_doc_id_str}. Response: {ai_response_str}")
-                return {'message': 'AI returned malformed data. Could not parse evaluation.'}, 502
-
-            final_grade = (
+            final_grade = round(
                 ai_data.get("relevance_accuracy", {}).get("score", 0) * GRADING_WEIGHTS["relevance_accuracy"] +
                 ai_data.get("reference_material", {}).get("score", 0) * GRADING_WEIGHTS["reference_material"] +
                 ai_data.get("grammar_word_choice", {}).get("score", 0) * GRADING_WEIGHTS["grammar_word_choice"] +
                 ai_data.get("logical_structure", {}).get("score", 0) * GRADING_WEIGHTS["logical_structure"]
             )
-            final_grade = round(final_grade)
 
             ai_evaluation_details = {
                 "final_grade": final_grade,
@@ -202,7 +192,7 @@ JSON RESPONSE FORMAT:
                 }
             }
 
-            update_result = collection.update_one(
+            collection.update_one(
                 {"_id": student_answer_doc_oid},
                 {
                     "$set": {
@@ -213,24 +203,21 @@ JSON RESPONSE FORMAT:
                     "$unset": {"ai_evaluation_text": ""}
                 }
             )
-            if update_result.modified_count > 0:
-                app.logger.info(f"Successfully saved structured AI evaluation to MongoDB for document {student_answer_doc_id_str}.")
-            else:
-                app.logger.warning(f"AI evaluation was generated but failed to save to MongoDB for document {student_answer_doc_id_str}.")
 
-            return {
-                'document_id': student_answer_doc_id_str,
-                'message': 'Grading successful',
-                'evaluation_details': ai_evaluation_details
-            }, 200
+            return {'document_id': student_answer_doc_id_str, 'evaluation_details': ai_evaluation_details}, 200
 
         except Exception as e:
-            app.logger.error(f"Error during AI grading process for document {student_answer_doc_id_str}: {e}", exc_info=True)
+            app.logger.error(f"Error during AI grading process for document {student_answer_doc_id_str}: {e}",
+                             exc_info=True)
+            if "authentication" in str(e).lower() and custom_api_key:
+                return {'message': f'Custom API key is invalid or expired. Please check your settings.'}, 401
             return {'message': f'Error communicating with AI service: {e}'}, 502
+
 
 @app.route('/health')
 def health_check():
     return jsonify({"status": "ok", "message": "Grading service is running"}), 200
+
 
 api.add_resource(GradeDocument, '/grade_document')
 

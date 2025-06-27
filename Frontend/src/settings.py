@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+from pymongo import MongoClient
 
 st.title("⚙️ Application Settings")
 
@@ -22,12 +23,11 @@ st.table(pd.DataFrame(list(env_vars.items()), columns=["Variable", "Value"]))
 st.info("These settings are primarily for display and debugging. Database passwords are not shown.")
 
 if st.button("Test Database Connections (from Frontend perspective)",
-             key="settings_test_db_conn_btn"):  # Added unique key
-    from frontendData import session as new_session_instance_func, User  # Use the sessionmaker
+             key="settings_test_db_conn_btn"):
+    from frontendData import SessionLocal
+    from frontendData import User
 
-    # It's better to create a new session for such tests
-    test_session = new_session_instance_func()
-
+    test_session = SessionLocal()
     try:
         user_count = test_session.query(User).count()
         st.success(f"MySQL Connection OK. Found {user_count} users.")
@@ -38,10 +38,47 @@ if st.button("Test Database Connections (from Frontend perspective)",
 
     try:
         MONGO_URI_TEST = f"mongodb://{os.getenv('MONGO_USER_FRONTEND', 'root')}:{os.getenv('MONGO_PASSWORD_FRONTEND', 'example')}@{os.getenv('MONGO_HOST', 'mongodb-server')}:27017/?authSource=admin&serverSelectionTimeoutMS=3000"
-        client_test = MongoClient(MONGO_URI_TEST)  # serverSelectionTimeoutMS in URI
+        client_test = MongoClient(MONGO_URI_TEST)
         client_test.admin.command('ping')
         st.success(
             f"MongoDB Connection OK (DB: {os.getenv('MONGO_DB_NAME_FRONTEND')}, Collection: {os.getenv('MONGO_FILES_COLLECTION_FRONTEND')}).")
         client_test.close()
     except Exception as e:
         st.error(f"MongoDB Connection Test FAILED: {e}")
+
+st.markdown("---")
+
+st.subheader("Custom AI Service Configuration")
+st.warning("This is an advanced feature. The credentials you enter here will be used for your current session only and will override the default system configuration.", icon="⚠️")
+
+# Get current values from session state, or default to empty strings
+custom_url = st.session_state.get("custom_api_url", "")
+custom_key = st.session_state.get("custom_api_key", "")
+
+# Create the input fields, their values are directly tied to session_state
+st.session_state.custom_api_url = st.text_input(
+    "Custom API Base URL",
+    value=custom_url,
+    placeholder="e.g., https://api.example.com"
+)
+st.session_state.custom_api_key = st.text_input(
+    "Custom API Key",
+    value=custom_key,
+    type="password",
+    placeholder="Enter your secret key"
+)
+
+# --- MODIFIED: Added Reset Button ---
+if st.button("Reset to Default Configuration", key="reset_api_config_btn"):
+    # Safely remove the custom keys from the session state
+    st.session_state.pop("custom_api_url", None)
+    st.session_state.pop("custom_api_key", None)
+    st.success("Configuration has been reset to the system default.")
+    # Rerun the page to immediately update the input fields and status message
+    st.rerun()
+
+# Display a status message based on the session state
+if st.session_state.get("custom_api_url") and st.session_state.get("custom_api_key"):
+    st.success(f"Custom AI configuration is active for this session. Target URL: {st.session_state.get('custom_api_url')}")
+else:
+    st.info("Using default system AI configuration.")
