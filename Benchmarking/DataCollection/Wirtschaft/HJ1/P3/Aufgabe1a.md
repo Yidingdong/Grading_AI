@@ -1,0 +1,6 @@
+#### Nr.1 a)
+
+*(Ein handgezeichnetes Preis-Mengen-Diagramm ist abgebildet. Die y-Achse ist mit "Preis" und die x-Achse mit "Menge" beschriftet. Es zeigt eine fallende "Nachfrage"-Kurve und zwei steigende Angebotskurven, A₀ und A₁. Die Kurve A₁ ist nach rechts von A₀ verschoben. Der ursprüngliche Gleichgewichtspunkt liegt bei (m₀, p₀) und der neue bei (m₁, p₁), was eine gestiegene Menge und einen gesunkenen Preis anzeigt.)*
+
+Der dargestellte Sachverhalt behandelt Billigflieger. Es wird beschrieben, dass das Angebot solcher Flüge stark gewachsen ist. Daher kommt es im Preis-Mengen-Diagramm zu einer Verschiebung der Angebotskurve nach rechts. Dadurch, dass das Angebot wächst, sinken die Preise für solche Flüge, weil mehr Angebot auch mehr Konkurrenz bedeutet. Das Sinken der Preise erkennt man auch im Preismengen Diagramm, denn dadurch dass die Angebotskurve verschoben wird, ergibt sich ein neuer Schnittpunkt der beiden Geraden. Dieser Schnittpunkt zeigt den Gleichgewichtspreis & die Gleichgewichtsmenge. Dort ist der Markt also gesättigt, es gibt weder ein Nachfrage- noch ein Angebotsüberschuss. Betrachtet man den Gleichgewichtspreis sieht man, dass der neue niedriger als der alte ist, während die Gleichgewichtsmenge steigt. Auf dem Markt für billig Flieger steigt also das Angebot und der Preis sinkt.
+
