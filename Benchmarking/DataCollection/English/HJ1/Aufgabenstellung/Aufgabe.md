@@ -1,0 +1,1 @@
+Analyse James Baldwin’s quote (M1). 
