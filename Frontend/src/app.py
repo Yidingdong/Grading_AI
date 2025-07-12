@@ -391,7 +391,8 @@ def create_student_course_page_callable(course_obj, enrollment_obj):
     return specific_student_course_page
 if not st.session_state.logged_in:
     with st.container():
-        st.title("Grading AI Portal"); st.subheader("🔐 Sign up / Log in")
+        st.title("Grading AI Portal")
+        st.subheader("🔐 Sign up / Log in")
         choice = st.selectbox("Choose Action:", ["Login", "Sign Up"], key="main_login_signup_choice")
         form_username = st.text_input("Username", key="main_form_username")
         form_password = st.text_input("Password", type="password", key="main_form_password")
@@ -399,14 +400,19 @@ if not st.session_state.logged_in:
             form_full_name = st.text_input("Full Name", key="main_form_full_name")
             form_role = st.selectbox("Select Role:", ["Teacher", "Student"], key="main_form_role")
             if st.button("Sign Up", key="main_signup_btn"):
-                if form_username and form_password and form_full_name: signup(form_username, form_password, form_role, form_full_name)
-                else: st.error("All fields are required for sign up.")
+                if form_username and form_password and form_full_name:
+                    signup(form_username, form_password, form_role, form_full_name)
+                else:
+                    st.error("All fields are required for sign up.")
         elif choice == "Login":
             if st.button("Log In", key="main_login_btn"):
-                if form_username and form_password: login(form_username, form_password)
-                else: st.error("Username and password are required for login.")
+                if form_username and form_password:
+                    login(form_username, form_password)
+                else:
+                    st.error("Username and password are required for login.")
 else:
-    st.sidebar.title(f"Welcome, {st.session_state.username}!"); st.sidebar.caption(f"Role: {st.session_state.role}")
+    st.sidebar.title(f"Welcome, {st.session_state.username}!")
+    st.sidebar.caption(f"Role: {st.session_state.role}")
     navigation_config = {"Account": [profile_page_nav, logout_nav_page]}
     if st.session_state.role == "Teacher":
         user_id = st.session_state.user_id
