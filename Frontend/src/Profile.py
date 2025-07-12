@@ -24,7 +24,6 @@ if 'logged_in' in st.session_state and st.session_state.logged_in:
             for course in courses:
                 num_students = session.query(Enrollment).filter_by(course_id=course.course_id).count()
                 teacher_courses_display.append({
-                    "Course ID": course.course_id,
                     "Course name": course.name,
                     "Number of students": num_students,
                     "Status": "active" if course.is_active else "completed"
