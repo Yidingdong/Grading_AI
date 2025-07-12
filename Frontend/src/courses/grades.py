@@ -12,23 +12,16 @@ if st.session_state.get("logged_in") and st.session_state.get("role") == "Studen
         grades_data = []
         if student_enrollments:
             for enrollment in student_enrollments:
-                course_name = "N/A"
-                course_status = "N/A"
-                if enrollment.course:  # Check if course object is loaded
-                    course_name = enrollment.course.name
-                    course_status = "Active" if enrollment.course.is_active else "Completed"
-
+                course_name = enrollment.course.name if enrollment.course else "N/A"
                 grades_data.append({
                     "Course Name": course_name,
-                    "Course ID": enrollment.course_id,
-                    "Grade": enrollment.grade if enrollment.grade else "Not Graded",
-                    "Course Status": course_status
+                    "Grade": enrollment.grade if enrollment.grade else "Not graded"
                 })
 
             if grades_data:
                 df_grades = pd.DataFrame(grades_data)
-                st.subheader("Your Enrolled Courses and Grades")
-                st.dataframe(df_grades)
+                st.subheader("Your Grades")
+                st.table(df_grades)
             else:
                 st.info("No grade data found for your enrollments.")
         else:
@@ -37,5 +30,5 @@ if st.session_state.get("logged_in") and st.session_state.get("role") == "Studen
         st.error("Student ID not found in session. Please log in again.")
 else:
     st.warning("You must be logged in as a student to view your grades.")
-    if st.button("Go to Login", key="grades_goto_login_btn"):  # Added unique key
+    if st.button("Go to Login", key="grades_goto_login_btn"):
         st.switch_page("app.py")
