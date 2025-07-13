@@ -1,0 +1,4 @@
+\*\*1) a)\*\* 
+
+Laut Hein ist die Revolution aus mehreren Gründen gescheitert. Zum einen führt er an, dass der innere Zusammenhang der ohnehin schon gespaltenen Revolutionären mit verschiedenen Grundideen (liberal, radikal demokratisch) aufgebrochen wurde (Z. 13-16) und von Gegenrevolutionären aufgebrochen wurde (Z. 13-16). Des weiteren schreibt er, dass die Grundidee der Revolution, die besagt dass der Staat dem politischen Willen der Völker unterworfen sei, mit der Zeit zunehmend verschwand (Z. 17 ff). Außerdem sei laut ihm einige der Forderungen, wie der Abschluss der Agrarreform vom Staat erfüllt worden (Z. 6 ff) welcher den Revolutionären, welche für einen kompletten Systemwechsel waren, Unterstützung nahm. Zudem schreibt er noch, dass die Revolutionäre selbst die Revolution als verloren ansahen, weil viele von diesen eingesperrt und bestraft wurden (Z. 1-3)
+

@@ -37,11 +37,10 @@ def plot_winners_summary(winners):
     cell_text = []
     row_colours = []
 
-    # Prepare data and colors for the table (no emojis)
     for category, winner in winners.items():
         cell_text.append([category, winner])
         if category == "Overall Best":
-            row_colours.append(['#FFFACD', '#FFFACD'])  # Lemon Chiffon for the highlight
+            row_colours.append(['#FFFACD', '#FFFACD'])
         else:
             row_colours.append(['white', 'white'])
 
@@ -49,7 +48,7 @@ def plot_winners_summary(winners):
         cellText=cell_text,
         colLabels=['Category', 'Winner'],
         loc='center',
-        cellLoc='left',  # Align text to the left for readability
+        cellLoc='left',
         colWidths=[0.4, 0.6],
         cellColours=row_colours
     )
@@ -58,19 +57,15 @@ def plot_winners_summary(winners):
     table.set_fontsize(16)
     table.scale(1.2, 2.0)
 
-    # Style table cells for a professional look
     for (i, j), cell in table.get_celld().items():
         cell.set_edgecolor('black')
-        cell.PAD = 0.05  # Add some padding to the left of the text
+        cell.PAD = 0.05
 
-        # Header styling
         if i == 0:
             cell.set_text_props(weight='bold', color='white', ha='center')
             cell.set_facecolor('#4682B4')
-        # Overall winner row styling
         elif i == len(winners):
             cell.set_text_props(weight='bold', ha='left')
-        # Other content cells
         else:
             cell.set_text_props(ha='left')
 
@@ -81,107 +76,197 @@ def plot_winners_summary(winners):
 
 
 def plot_accuracy_chart(stats_df):
-    """Generates and saves the accuracy chart with error bars for consistency."""
+    """Generates and saves the accuracy chart with error bars for consistency (vertical)."""
     print(" -> Generating 1. Accuracy & Consistency Chart...")
     plt.style.use('seaborn-v0_8-whitegrid')
-    fig, ax = plt.subplots(figsize=(12, len(stats_df) * 0.8 + 1))
+    fig, ax = plt.subplots(figsize=(10, 8))
 
-    sns.barplot(x='mean_error', y=stats_df.index, data=stats_df, palette='viridis_r', orient='h', ax=ax)
-    ax.errorbar(x=stats_df['mean_error'], y=stats_df.index, xerr=stats_df['std_dev_error'], fmt='none', ecolor='black',
-                capsize=4)
+    sns.barplot(
+        x=stats_df.index,
+        y='mean_error',
+        data=stats_df,
+        palette='viridis_r',
+        ax=ax
+    )
 
-    ax.set_title('AI Model Grading Accuracy & Consistency', fontsize=16, weight='bold')
-    ax.set_xlabel('Average Point Deviation (Error Bars = Standard Deviation)')
-    ax.set_ylabel('Model')
-    ax.invert_yaxis()
+    ax.errorbar(
+        x=stats_df.index,
+        y=stats_df['mean_error'],
+        yerr=stats_df['std_dev_error'],
+        fmt='none',
+        ecolor='black',
+        capsize=8,  # Increased capsize
+        elinewidth=2  # Increased line width
+    )
 
-    for index, (model_name, row) in enumerate(stats_df.iterrows()):
+    ax.set_title('AI Model Grading Accuracy & Consistency', fontsize=18, weight='bold')
+    ax.set_xlabel('Model', fontsize=14)
+    ax.set_ylabel('Average Point Deviation (Error Bars = Standard Deviation)', fontsize=14)
+
+    plt.xticks(rotation=45, ha='right', fontsize=12)
+    plt.yticks(fontsize=12)
+
+    # --- MODIFICATION: Adjusted Y-axis limit for better visibility with limited data ---
+    max_error = stats_df['mean_error'].max() + stats_df['std_dev_error'].max() * 1.5
+    ax.set_ylim(0, max(1.0, max_error))  # Ensure y-axis starts at 0 and has enough space above
+
+    for i, (model_name, row) in enumerate(stats_df.iterrows()):
         if row['successful_grades'] > 0:
-            ax.text(row.mean_error, index, f" {row.mean_error:.2f}", va='center', ha='left')
+            # Position text carefully based on the mean and std dev
+            text_y_pos = row['mean_error'] + row['std_dev_error'] + (
+                        ax.get_ylim()[1] * 0.02)  # Adjusted based on plot height
+            ax.text(
+                i,
+                text_y_pos,
+                f"{row['mean_error']:.2f}",
+                va='bottom',
+                ha='center',
+                fontsize=11,  # Increased font size
+                color='black',  # Ensure text color is visible
+                fontweight='bold'
+            )
+            ax.text(
+                i,
+                text_y_pos + (ax.get_ylim()[1] * 0.02),  # Slightly above the mean text
+                f"(Success: {row['success_rate_%']}%)",
+                va='bottom',
+                ha='center',
+                fontsize=9,
+                color='gray'
+            )
         else:
-            ax.text(0.01, index, f" 100% FAILURE (0/{int(row.total_attempts)})", va='center', ha='left', color='red',
-                    fontweight='bold')
+            ax.text(
+                i,
+                ax.get_ylim()[1] * 0.5,  # Place failure text in the middle of the plot area
+                f"100% FAILURE\n(0/{int(row.total_attempts)})",
+                va='center',
+                ha='center',
+                color='red',
+                fontweight='bold',
+                fontsize=12  # Increased font size
+            )
 
-    plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "1_accuracy_and_consistency.png")
+    plt.tight_layout(pad=1.5)
+    plt.savefig(OUTPUT_DIR / "1_accuracy_and_consistency.png", dpi=150)
     plt.close()
 
 
 def plot_latency_chart(df, model_order):
-    """Generates and saves the latency distribution as a Violin Plot."""
+    """Generates and saves the latency distribution as a Violin Plot (vertical)."""
     print(" -> Generating 2. Latency (Speed) Chart...")
     latency_data = df[df['latency_seconds'] > 0]
 
     plt.style.use('seaborn-v0_8-whitegrid')
-    fig, ax = plt.subplots(figsize=(12, len(model_order) * 0.8 + 1))
+    fig, ax = plt.subplots(figsize=(10, 8))
 
-    sns.violinplot(x='latency_seconds', y='model', data=latency_data, palette='coolwarm', orient='h', order=model_order,
-                   ax=ax, inner='quartile')
+    sns.violinplot(
+        x='model',
+        y='latency_seconds',
+        data=latency_data,
+        palette='coolwarm',
+        order=model_order,
+        ax=ax,
+        inner='quartile'
+    )
 
-    ax.set_title('Latency Distribution per Model (Speed)', fontsize=16, weight='bold')
-    ax.set_xlabel('Response Time (seconds) - Lower is Better')
-    ax.set_ylabel('Model')
+    ax.set_title('Latency Distribution per Model (Speed)', fontsize=18, weight='bold')
+    ax.set_xlabel('Model', fontsize=14)
+    ax.set_ylabel('Response Time (seconds) - Lower is Better', fontsize=14)
 
-    plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "2_latency_distribution.png")
+    plt.xticks(rotation=45, ha='right', fontsize=12)
+    plt.yticks(fontsize=12)
+
+    # --- MODIFICATION: Adjust Y-axis limit for latency if data is sparse ---
+    if not latency_data.empty:
+        max_latency = latency_data['latency_seconds'].max()
+        ax.set_ylim(0, max_latency * 1.2)  # Give 20% extra space above max latency
+
+    plt.tight_layout(pad=1.5)
+    plt.savefig(OUTPUT_DIR / "2_latency_distribution.png", dpi=150)
     plt.close()
 
 
 def plot_token_usage_chart(stats_df):
-    """Generates a stacked bar chart for average token usage."""
+    """Generates a stacked bar chart for average token usage (vertical)."""
     print(" -> Generating 3. Token Usage (Efficiency) Chart...")
     token_data = stats_df.copy()
     token_data['total_avg_tokens'] = token_data['avg_input_tokens'] + token_data['avg_output_tokens']
     token_data = token_data.sort_values('total_avg_tokens', ascending=True)
 
     plt.style.use('seaborn-v0_8-whitegrid')
-    fig, ax = plt.subplots(figsize=(12, len(token_data) * 0.8 + 1))
+    fig, ax = plt.subplots(figsize=(10, 8))
 
-    ax.barh(token_data.index, token_data['avg_input_tokens'], color='#3B82F6', label='Input Tokens')
-    ax.barh(token_data.index, token_data['avg_output_tokens'], left=token_data['avg_input_tokens'], color='#F97316',
-            label='Output Tokens')
+    ax.bar(token_data.index, token_data['avg_input_tokens'], color='#3B82F6', label='Input Tokens')
+    ax.bar(token_data.index, token_data['avg_output_tokens'], bottom=token_data['avg_input_tokens'], color='#F97316',
+           label='Output Tokens')
 
-    ax.set_title('Average Token Usage per Model (Efficiency)', fontsize=16, weight='bold')
-    ax.set_xlabel('Average Tokens per Request')
-    ax.set_ylabel('Model')
-    ax.legend()
+    ax.set_title('Average Token Usage per Model (Efficiency)', fontsize=18, weight='bold')
+    ax.set_xlabel('Model', fontsize=14)
+    ax.set_ylabel('Average Tokens per Request', fontsize=14)
+    ax.legend(fontsize=10)
 
-    plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "3_token_usage.png")
+    plt.xticks(rotation=45, ha='right', fontsize=12)
+    plt.yticks(fontsize=12)
+
+    # --- MODIFICATION: Adjust Y-axis limit for token usage if data is sparse ---
+    if not token_data.empty:
+        max_tokens = token_data['total_avg_tokens'].max()
+        ax.set_ylim(0, max_tokens * 1.2)  # Give 20% extra space above max tokens
+
+    plt.tight_layout(pad=1.5)
+    plt.savefig(OUTPUT_DIR / "3_token_usage.png", dpi=150)
     plt.close()
 
 
 def plot_performance_efficiency_chart(stats_df):
-    """Generates a scatter plot comparing model accuracy and token efficiency."""
+    """Generates a scatter plot comparing model accuracy and token efficiency (swapped axes)."""
     print(" -> Generating 4. Performance vs. Efficiency Chart...")
     plot_data = stats_df[stats_df['successful_grades'] > 0].copy()
 
     if plot_data.empty: return
 
     plt.style.use('seaborn-v0_8-whitegrid')
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(10, 8))
 
-    sns.scatterplot(data=plot_data, x='total_avg_tokens', y='mean_error', hue=plot_data.index, s=200, palette='viridis',
-                    legend=False, ax=ax)
+    sns.scatterplot(
+        data=plot_data,
+        x='mean_error',
+        y='total_avg_tokens',
+        hue=plot_data.index,
+        s=400,  # Increased size of points for better visibility
+        palette='viridis',
+        legend=False,
+        ax=ax
+    )
+
+    # --- MODIFICATION: Remove arrow annotation ---
+    # ax.annotate(...) # Removed this block
+
+    # --- MODIFICATION: Adjust axis limits to fit sparse data if only one point ---
+    if len(plot_data) == 1:
+        x_val = plot_data['mean_error'].iloc[0]
+        y_val = plot_data['total_avg_tokens'].iloc[0]
+        ax.set_xlim(x_val * 0.9, x_val * 1.1)  # 10% padding around single point
+        ax.set_ylim(y_val * 0.9, y_val * 1.1)  # 10% padding around single point
+    else:
+        # For multiple points, set limits based on data range
+        ax.set_xlim(plot_data['mean_error'].min() * 0.9, plot_data['mean_error'].max() * 1.1)
+        ax.set_ylim(plot_data['total_avg_tokens'].min() * 0.9, plot_data['total_avg_tokens'].max() * 1.1)
 
     for i, row in plot_data.iterrows():
-        ax.text(row['total_avg_tokens'] * 1.02, row['mean_error'], i, fontsize=9)
+        ax.text(row['mean_error'], row['total_avg_tokens'] * 1.01, i, fontsize=11, ha='center', va='bottom',
+                bbox=dict(boxstyle="round,pad=0.2", fc="yellow", ec="black", lw=0.5,
+                          alpha=0.7))  # Added bbox for clarity
 
-    ax.set_title('Performance vs. Efficiency Analysis', fontsize=16, weight='bold')
-    ax.set_xlabel('Average Total Tokens per Request - Lower is Better (More Efficient) →')
-    ax.set_ylabel('Average Point Deviation - Lower is Better (More Accurate) →')
+    ax.set_title('Performance vs. Efficiency Analysis', fontsize=18, weight='bold')
+    ax.set_xlabel('Average Point Deviation (More Accurate →)', fontsize=14)
+    ax.set_ylabel('Average Total Tokens per Request (More Efficient →)', fontsize=14)
 
-    ax.annotate(
-        'Ideal models are here\n(High Accuracy, High Efficiency)',
-        xy=(plot_data['total_avg_tokens'].min(), plot_data['mean_error'].min()),
-        xytext=(plot_data['total_avg_tokens'].quantile(0.6), plot_data['mean_error'].quantile(0.6)),
-        arrowprops=dict(facecolor='black', shrink=0.05, width=1, headwidth=8),
-        fontsize=12,
-        bbox=dict(boxstyle="round,pad=0.3", fc="yellow", ec="black", lw=1, alpha=0.5)
-    )
     ax.grid(True)
-    plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "4_performance_vs_efficiency.png")
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.tight_layout(pad=1.5)
+    plt.savefig(OUTPUT_DIR / "4_performance_vs_efficiency.png", dpi=150)
     plt.close()
 
 
@@ -191,23 +276,29 @@ def plot_bias_heatmap(df):
     successful_df = df[df['ai_awarded_points'].notna()].copy()
     successful_df['grading_error'] = (successful_df['ai_awarded_points'] - successful_df['actual_points']).abs()
 
-    bias_data = successful_df.groupby(['model', 'subject'])['grading_error'].mean().unstack()
+    bias_data = successful_df.groupby(['model', 'subject'])['grading_error'].mean().unstack(fill_value=None)
 
     if bias_data.empty or bias_data.shape[1] < 2:
-        print("    -> Skipping chart: Not enough subject diversity to generate bias heatmap.")
+        print(
+            "    -> Skipping chart: Not enough subject diversity to generate bias heatmap (need at least 2 subjects with data).")
         return
 
     plt.style.use('seaborn-v0_8-whitegrid')
-    fig, ax = plt.subplots(figsize=(10, 8))
+    # Dynamically adjust figsize based on number of models and subjects
+    fig_height = max(5, bias_data.shape[0] * 0.8)
+    fig_width = max(8, bias_data.shape[1] * 2)
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-    sns.heatmap(bias_data, annot=True, fmt=".2f", cmap="Reds", linewidths=.5, ax=ax)
+    sns.heatmap(bias_data, annot=True, fmt=".2f", cmap="Reds", linewidths=.5, ax=ax, annot_kws={"fontsize": 11})
 
-    ax.set_title('Bias Check: Average Grading Error by Subject', fontsize=16, weight='bold')
-    ax.set_xlabel('Subject')
-    ax.set_ylabel('Model')
+    ax.set_title('Bias Check: Average Grading Error by Subject', fontsize=18, weight='bold')
+    ax.set_xlabel('Subject', fontsize=14)
+    ax.set_ylabel('Model', fontsize=14)
 
-    plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "5_subject_bias_heatmap.png")
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.tight_layout(pad=1.5)
+    plt.savefig(OUTPUT_DIR / "5_subject_bias_heatmap.png", dpi=150)
     plt.close()
 
 
@@ -244,22 +335,25 @@ def analyze_full_report(filepath):
     final_stats['success_rate_%'] = (final_stats['successful_grades'] / final_stats['total_attempts'] * 100).round(1)
     final_stats['total_avg_tokens'] = final_stats['avg_input_tokens'] + final_stats['avg_output_tokens']
 
+    # Sort by success rate, then mean error. This order is important for consistency across charts.
     final_stats_sorted = final_stats.sort_values(by=['success_rate_%', 'mean_error'], ascending=[False, True])
 
     print("\n--- Full Model Statistics Summary ---")
     print(final_stats_sorted.to_string())
 
     # --- Determine Winners ---
-    successful_models = final_stats_sorted[final_stats_sorted['successful_grades'] > 0]
+    successful_models = final_stats_sorted[final_stats_sorted['successful_grades'] > 0].copy()
 
     if not successful_models.empty:
-        # Create a copy to avoid SettingWithCopyWarning
-        successful_models = successful_models.copy()
         successful_models['accuracy_rank'] = successful_models['mean_error'].rank()
         successful_models['consistency_rank'] = successful_models['std_dev_error'].rank()
         successful_models['efficiency_rank'] = successful_models['total_avg_tokens'].rank()
-        successful_models['overall_score'] = successful_models['accuracy_rank'] + successful_models[
-            'consistency_rank'] + successful_models['efficiency_rank']
+        successful_models['speed_rank'] = successful_models['median_latency'].rank()
+
+        successful_models['overall_score'] = successful_models['accuracy_rank'] + \
+                                             successful_models['consistency_rank'] + \
+                                             successful_models['efficiency_rank'] + \
+                                             successful_models['speed_rank']
 
         winners = {
             "Accuracy": successful_models['mean_error'].idxmin(),
