@@ -1,142 +1,256 @@
 ﻿job_id,subject,model,prompt_style,max_points,actual_points,ai_evaluation_json,latency_seconds,input_tokens,output_tokens,error
+Ethik_HJ2_Aufgabe1a_P1,Ethik,gpt-4o-mini,persona_teacher_json,3.0,3.0,"{
+  ""awarded_points"": 2.5
+}",3.561241000017617,1393,13,
+Ethik_HJ2_Aufgabe1b_P1,Ethik,gpt-4o-mini,persona_teacher_json,5.0,3.0,"{
+  ""awarded_points"": 4.0
+}",1.0064255000033882,1620,13,
+Ethik_HJ2_Aufgabe1c_P1,Ethik,gpt-4o-mini,persona_teacher_json,3.0,1.0,"{
+  ""awarded_points"": 2.0
+}",1.2585333999886643,1417,13,
+Ethik_HJ2_Aufgabe2a_P1,Ethik,gpt-4o-mini,persona_teacher_json,4.0,2.0,"{
+  ""awarded_points"": 2.5
+}",0.9990531000075862,1342,13,
+Ethik_HJ2_Aufgabe2b_P1,Ethik,gpt-4o-mini,persona_teacher_json,5.0,3.0,"{
+  ""awarded_points"": 4.0
+}",1.0703012000012677,1593,13,
+Ethik_HJ2_Aufgabe2c_P1,Ethik,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.0
+}",1.1187063000106718,1450,13,
 Ethik_HJ2_Aufgabe3_P1,Ethik,gpt-4o-mini,persona_teacher_json,1.0,1.0,"{
   ""awarded_points"": 1.0
-}",1.303968399995938,1502,13,
+}",1.1659975000075065,1502,13,
+Ethik_HJ2_Aufgabe1a_P2,Ethik,gpt-4o-mini,persona_teacher_json,3.0,2.0,"{
+  ""awarded_points"": 2.5
+}",1.1303513999737334,1380,13,
+Ethik_HJ2_Aufgabe1b_P2,Ethik,gpt-4o-mini,persona_teacher_json,5.0,4.0,"{
+  ""awarded_points"": 4.0
+}",0.8811018999840599,1508,13,
+Ethik_HJ2_Aufgabe1c_P2,Ethik,gpt-4o-mini,persona_teacher_json,3.0,2.0,"{
+  ""awarded_points"": 2.0
+}",1.1143209000001661,1424,13,
+Ethik_HJ2_Aufgabe2a_P2,Ethik,gpt-4o-mini,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.0
+}",1.0394718000025023,1389,13,
+Ethik_HJ2_Aufgabe2b_P2,Ethik,gpt-4o-mini,persona_teacher_json,5.0,4.0,"{
+  ""awarded_points"": 3.0
+}",1.166660699993372,1432,13,
+Ethik_HJ2_Aufgabe2c_P2,Ethik,gpt-4o-mini,persona_teacher_json,4.0,1.0,"{
+  ""awarded_points"": 2.5
+}",0.9470673000032548,1380,13,
 Ethik_HJ2_Aufgabe3_P2,Ethik,gpt-4o-mini,persona_teacher_json,1.0,0.0,"{
   ""awarded_points"": 0.0
-}",1.0850616999960039,1306,13,
+}",1.130449000018416,1306,13,
+Ethik_HJ2_Aufgabe1a_P3,Ethik,gpt-4o-mini,persona_teacher_json,3.0,3.0,"{
+  ""awarded_points"": 2.5
+}",0.8304914000036661,1389,13,
+Ethik_HJ2_Aufgabe1b_P3,Ethik,gpt-4o-mini,persona_teacher_json,5.0,4.0,"{
+  ""awarded_points"": 4.0
+}",1.0015108000079636,1616,13,
+Ethik_HJ2_Aufgabe1c_P3,Ethik,gpt-4o-mini,persona_teacher_json,3.0,3.0,"{
+  ""awarded_points"": 2.5
+}",1.051075099996524,1591,13,
+Ethik_HJ2_Aufgabe2a_P3,Ethik,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.0
+}",1.052985999995144,1428,13,
+Ethik_HJ2_Aufgabe2b_P3,Ethik,gpt-4o-mini,persona_teacher_json,5.0,4.0,"{
+  ""awarded_points"": 4.0
+}",0.9642156999907456,1750,13,
+Ethik_HJ2_Aufgabe2c_P3,Ethik,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.0
+}",0.9841292999917641,1537,13,
 Ethik_HJ2_Aufgabe3_P3,Ethik,gpt-4o-mini,persona_teacher_json,1.0,1.0,"{
   ""awarded_points"": 1.0
-}",1.0092515000142157,1530,13,
+}",1.0202970000100322,1530,13,
 Geschichte_HJ1_Aufgabe1_P1,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,9.0,"{
   ""awarded_points"": 8.0
-}",1.0639869000006001,3014,13,
+}",1.2425828999839723,3014,13,
 Geschichte_HJ1_Aufgabe2_P1,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,8.0,"{
   ""awarded_points"": 8.0
-}",1.1754998000105843,3183,13,
+}",1.0400965999870095,3183,13,
 Geschichte_HJ1_Aufgabe3_P1,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,10.0,"{
   ""awarded_points"": 8.0
-}",0.9472807999991346,3341,13,
+}",1.1002298000094015,3341,13,
 Geschichte_HJ1_Aufgabe1_P2,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,8.0,"{
   ""awarded_points"": 7.0
-}",1.1533766000065953,3322,13,
+}",1.022280300006969,3322,13,
 Geschichte_HJ1_Aufgabe2_P2,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,6.0,"{
-  ""awarded_points"": 7.0
-}",1.0978676999802701,2826,13,
+  ""awarded_points"": 8.0
+}",1.0705801000003703,2826,13,
 Geschichte_HJ1_Aufgabe3_P2,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,9.0,"{
   ""awarded_points"": 7.0
-}",1.3710428999911528,3002,13,
+}",0.9570012000040151,3002,13,
 Geschichte_HJ1_Aufgabe1_P3,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,8.0,"{
   ""awarded_points"": 8.0
-}",1.0064416000095662,3134,13,
+}",1.025395100004971,3134,13,
 Geschichte_HJ1_Aufgabe2_P3,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,8.0,"{
   ""awarded_points"": 8.0
-}",1.1824767999933101,3346,13,
+}",1.0089255000057165,3346,13,
 Geschichte_HJ1_Aufgabe3_P3,Geschichte,gpt-4o-mini,persona_teacher_json,10.0,5.0,"{
   ""awarded_points"": 7.0
-}",1.0311109999893233,2935,13,
+}",1.0630574999959208,2935,13,
+Geschichte_HJ2_Aufgabe1a_P1,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 6.5
+}",1.076716400013538,1786,13,
+Geschichte_HJ2_Aufgabe1b_P1,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.0
+}",1.0586902000068221,1902,13,
 Geschichte_HJ2_Aufgabe2_P1,Geschichte,gpt-4o-mini,persona_teacher_json,6.0,4.0,"{
   ""awarded_points"": 4.5
-}",0.988513399992371,1750,13,
+}",0.9671344000089448,1750,13,
+Geschichte_HJ2_Aufgabe3a_P1,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 5.5
+}",1.095097799989162,1808,13,
+Geschichte_HJ2_Aufgabe3b_P1,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.0
+}",0.9231422000157181,1708,13,
+Geschichte_HJ2_Aufgabe1a_P2,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 6.5
+}",0.8983842000016011,1945,13,
+Geschichte_HJ2_Aufgabe1b_P2,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,2.0,"{
+  ""awarded_points"": 2.5
+}",0.9851097000064328,1815,13,
 Geschichte_HJ2_Aufgabe2_P2,Geschichte,gpt-4o-mini,persona_teacher_json,6.0,5.0,"{
   ""awarded_points"": 4.5
-}",1.0481846999900881,1970,13,
+}",1.04492489999393,1970,13,
+Geschichte_HJ2_Aufgabe3a_P2,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 6.5
+}",1.0416529000212904,1964,13,
+Geschichte_HJ2_Aufgabe3b_P2,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,2.0,"{
+  ""awarded_points"": 3.0
+}",1.0811654000135604,2006,13,
+Geschichte_HJ2_Aufgabe1a_P3,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,6.0,"{
+  ""awarded_points"": 7.0
+}",1.0579537999874447,1982,13,
+Geschichte_HJ2_Aufgabe1b_P3,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.5
+}",1.0752477000060026,1972,13,
 Geschichte_HJ2_Aufgabe2_P3,Geschichte,gpt-4o-mini,persona_teacher_json,6.0,4.0,"{
   ""awarded_points"": 4.0
-}",0.9450465999834705,1749,13,
+}",1.0459442999854218,1749,13,
+Geschichte_HJ2_Aufgabe3a_P3,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,5.0,"{
+  ""awarded_points"": 6.5
+}",1.0735063000174705,1913,13,
+Geschichte_HJ2_Aufgabe3b_P3,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,2.0,"{
+  ""awarded_points"": 2.5
+}",1.0016490000125486,1690,13,
+Geschichte_HJ3_Aufgabe1a_P1,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,6.0,"{
+  ""awarded_points"": 6.5
+}",0.9794066000031307,2138,13,
+Geschichte_HJ3_Aufgabe1b_P1,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 2.5
+}",1.0648846999974921,2387,13,
 Geschichte_HJ3_Aufgabe2_P1,Geschichte,gpt-4o-mini,persona_teacher_json,6.0,6.0,"{
   ""awarded_points"": 5.0
-}",0.8494916999770794,2226,13,
+}",1.0704565000196453,2226,13,
+Geschichte_HJ3_Aufgabe3a_P1,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,6.0,"{
+  ""awarded_points"": 6.5
+}",1.1267451999883633,2462,13,
+Geschichte_HJ3_Aufgabe3b_P1,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.0
+}",1.0306987999938428,2080,13,
+Geschichte_HJ3_Aufgabe1a_P2,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 6.5
+}",0.8182976999960374,2182,13,
+Geschichte_HJ3_Aufgabe1b_P2,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.0
+}",0.5414435999991838,2201,13,
 Geschichte_HJ3_Aufgabe2_P2,Geschichte,gpt-4o-mini,persona_teacher_json,6.0,6.0,"{
   ""awarded_points"": 5.0
-}",0.8623162999865599,2054,13,
+}",0.6762054999999236,2054,13,
+Geschichte_HJ3_Aufgabe3a_P2,Geschichte,gpt-4o-mini,persona_teacher_json,8.0,5.0,"{
+  ""awarded_points"": 5.5
+}",0.6263402000186034,2377,13,
+Geschichte_HJ3_Aufgabe3b_P2,Geschichte,gpt-4o-mini,persona_teacher_json,4.0,2.0,"{
+  ""awarded_points"": 1.5
+}",0.6173155999858864,2033,13,
 Wirtschaft_HJ1_Aufgabe1a_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,8.0,"{
-  ""awarded_points"": 7.0
-}",0.8785697999992408,2575,13,
+  ""awarded_points"": 7.5
+}",0.6198830000066664,2575,13,
 Wirtschaft_HJ1_Aufgabe1b_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,2.0,"{
   ""awarded_points"": 1.5
-}",0.9719539000070654,2153,13,
+}",0.651922100019874,2153,13,
 Wirtschaft_HJ1_Aufgabe2_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,12.0,"{
-  ""awarded_points"": 10.5
-}",0.9874118000152521,3311,13,
+  ""awarded_points"": 11.5
+}",0.7234451999829616,3311,13,
 Wirtschaft_HJ1_Aufgabe1a_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,4.0,"{
   ""awarded_points"": 6.5
-}",1.0200363000039943,2537,13,
+}",0.7170159000088461,2537,13,
 Wirtschaft_HJ1_Aufgabe1b_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,2.0,"{
   ""awarded_points"": 1.0
-}",0.8989400999853387,2121,13,
+}",0.8425088000076357,2121,13,
 Wirtschaft_HJ1_Aufgabe2_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,10.0,"{
-  ""awarded_points"": 10.0
-}",1.1550543000048492,2919,13,
+  ""awarded_points"": 11.0
+}",0.7522744000016246,2919,13,
 Wirtschaft_HJ1_Aufgabe1a_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,7.0,"{
-  ""awarded_points"": 7.0
-}",0.9499198999837972,2436,13,
+  ""awarded_points"": 7.5
+}",0.6977991000167094,2436,13,
 Wirtschaft_HJ1_Aufgabe1b_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,2.0,"{
   ""awarded_points"": 1.0
-}",1.0915313999867067,2131,13,
+}",0.6497553999943193,2131,13,
 Wirtschaft_HJ1_Aufgabe2_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,12.0,"{
-  ""awarded_points"": 10.5
-}",1.0426940000033937,2570,13,
+  ""awarded_points"": 10.0
+}",0.7758800000010524,2570,13,
 Wirtschaft_HJ1_Aufgabe1a_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,3.0,"{
-  ""awarded_points"": 5.0
-}",1.0553138999966905,2398,13,
+  ""awarded_points"": 5.5
+}",0.6858359000179917,2398,13,
 Wirtschaft_HJ1_Aufgabe1b_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,1.0,"{
   ""awarded_points"": 1.0
-}",1.0792383000080008,2123,13,
+}",0.8512158999801613,2123,13,
 Wirtschaft_HJ1_Aufgabe2_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,12.0,"{
   ""awarded_points"": 10.5
-}",1.1145575000264216,2814,13,
+}",0.6611769000010099,2814,13,
 Wirtschaft_HJ1_Aufgabe1a_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,8.0,"{
   ""awarded_points"": 6.5
-}",0.9763211000245064,2330,13,
+}",0.8234830000146758,2330,13,
 Wirtschaft_HJ1_Aufgabe1b_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,2.0,"{
   ""awarded_points"": 1.5
-}",1.057577700004913,2194,13,
+}",0.6028005999978632,2194,13,
 Wirtschaft_HJ1_Aufgabe2_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,12.0,"{
   ""awarded_points"": 10.5
-}",0.9782591999974102,2725,13,
+}",0.6617598999873735,2725,13,
 Wirtschaft_HJ2_Aufgabe1_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
-  ""awarded_points"": 3.5
-}",1.0175887999939732,1376,13,
+  ""awarded_points"": 3.0
+}",0.7127639999962412,1376,13,
 Wirtschaft_HJ2_Aufgabe2_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,11.0,"{
   ""awarded_points"": 10.5
-}",1.0353707000031136,1810,13,
+}",0.6693031000031624,1810,13,
 Wirtschaft_HJ2_Aufgabe3_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,13.0,"{
-  ""awarded_points"": 11.0
-}",3.668052799999714,2200,13,
+  ""awarded_points"": 12.0
+}",0.7108412999950815,2200,13,
 Wirtschaft_HJ2_Aufgabe1_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
-  ""awarded_points"": 3.0
-}",1.057032100012293,1296,13,
+  ""awarded_points"": 2.0
+}",0.7125323000072967,1296,13,
 Wirtschaft_HJ2_Aufgabe2_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,11.0,"{
-  ""awarded_points"": 10.5
-}",1.0166800000006333,1998,13,
+  ""awarded_points"": 10.0
+}",0.6780610999849159,1998,13,
 Wirtschaft_HJ2_Aufgabe3_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,8.0,"{
   ""awarded_points"": 11.5
-}",1.1822121999866795,2158,13,
+}",0.7822343000152614,2158,13,
 Wirtschaft_HJ2_Aufgabe1_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
   ""awarded_points"": 4.0
-}",0.9845626000023913,1331,13,
+}",0.7846149000106379,1331,13,
 Wirtschaft_HJ2_Aufgabe2_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,10.0,"{
-  ""awarded_points"": 10.5
-}",1.0505044000165071,1812,13,
+  ""awarded_points"": 9.0
+}",0.7184437999967486,1812,13,
 Wirtschaft_HJ2_Aufgabe3_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,8.0,"{
-  ""awarded_points"": 10.5
-}",0.9744469999859575,1924,13,
+  ""awarded_points"": 11.0
+}",0.6399865999992471,1924,13,
 Wirtschaft_HJ2_Aufgabe1_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,4.0,"{
   ""awarded_points"": 3.0
-}",0.9950329999846872,1265,13,
+}",0.7971381999959704,1265,13,
 Wirtschaft_HJ2_Aufgabe2_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,8.0,"{
-  ""awarded_points"": 10.0
-}",1.135570300015388,1827,13,
+  ""awarded_points"": 10.5
+}",0.6763536999933422,1827,13,
 Wirtschaft_HJ2_Aufgabe3_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,9.0,"{
   ""awarded_points"": 11.0
-}",0.9725634999922477,1955,13,
+}",0.7391839999763761,1955,13,
 Wirtschaft_HJ2_Aufgabe1_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,4.0,"{
   ""awarded_points"": 3.0
-}",0.9132508999900892,1273,13,
+}",0.6745156999968458,1273,13,
 Wirtschaft_HJ2_Aufgabe2_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,11.0,"{
-  ""awarded_points"": 10.0
-}",1.0016404000052717,1968,13,
+  ""awarded_points"": 10.5
+}",0.6491790000000037,1968,13,
 Wirtschaft_HJ2_Aufgabe3_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,10.0,"{
-  ""awarded_points"": 11.0
-}",0.9348442000045907,2014,13,
+  ""awarded_points"": 10.0
+}",0.7317372000252362,2014,13,

@@ -7,7 +7,6 @@ import re
 import random
 
 # --- 1. CONFIGURATION ---
-# In benchmark.py
 MODELS_TO_TEST = [
     "gpt-4o-mini",
     # "gemma3-27b",
@@ -42,13 +41,7 @@ async def grade_task_worker(semaphore_map, client, job, prompt_name, template, m
     """Performs a single grading API call."""
     semaphore = semaphore_map[model_name]
     async with semaphore:
-        # Determine the level based on subject for German context
         level = "Leistungskurs" if job['subject'] in ["Chemie", "Wirtschaft"] else "Basiskurs"
-
-        # For English, the context might imply a different level or a general understanding of "high school"
-        # Since the German "Leistungskurs" and "Basiskurs" might not directly apply to English subjects,
-        # you might consider a more generic "Oberstufe" (upper secondary) or adjust as needed.
-        # For now, it will default to Basiskurs if not Chemie/Wirtschaft.
 
         user_prompt = template['user'].format(
             subject=job['subject'], level=level, max_points=job['max_points'],
@@ -189,43 +182,30 @@ def parse_punkte_file(filepath):
         return punkte_map
     try:
         content = filepath.read_text(encoding='utf-8').strip()
-
-        # --- NEW LOGIC: Try to parse as a single float first ---
-        # This handles files like "100" or "80"
         try:
             single_point_value = float(content)
-            # Convention: if it's a single number, it applies to the task named "Aufgabe" (from Aufgabe.md)
             punkte_map["Aufgabe"] = single_point_value
             return punkte_map
-        except ValueError:
-            # If it's not a single float, proceed with the original multi-line parsing
+        except (ValueError, TypeError):
             pass
 
-        # --- Original multi-task parsing logic ---
         current_nr_prefix = ""
         for line in content.splitlines():
             line = line.strip()
             if not line: continue
-
             nr_match = re.match(r"^Nr\.(\d+)\s*$", line)
             if nr_match:
                 current_nr_prefix = f"Aufgabe{nr_match.group(1)}"
-                continue  # Move to next line
-
+                continue
             nr_points_match = re.match(r"^Nr\.(\d+):\s*([\d\.]+)", line)
             if nr_points_match:
                 punkte_map[f"Aufgabe{nr_points_match.group(1)}"] = float(nr_points_match.group(2))
-                current_nr_prefix = ""  # Reset prefix after a main task
-                continue  # Move to next line
-
+                current_nr_prefix = ""
+                continue
             sub_task_match = re.match(r"^([a-zA-Z]):\s*([\d\.]+)", line)
             if sub_task_match and current_nr_prefix:
                 punkte_map[f"{current_nr_prefix}{sub_task_match.group(1)}"] = float(sub_task_match.group(2))
-                continue  # Move to next line
-
-            # If a line doesn't match any known format, you might want to log a warning here
-            # print(f"Warning: Unrecognized line format in {filepath}: '{line}'")
-
+                continue
     except Exception as e:
         print(f"Error parsing {filepath}: {e}")
     return punkte_map
@@ -236,6 +216,7 @@ def parse_erhaltene_punkte(student_dir):
 
 
 def discover_grading_jobs(root_path):
+    """MODIFIED to include a debugging print statement."""
     grading_jobs = []
     print("Discovering tasks, student answers, and actual scores...")
     for subject_path in root_path.iterdir():
@@ -245,42 +226,50 @@ def discover_grading_jobs(root_path):
             aufg_path = test_path / "Aufgabenstellungen"
             if not aufg_path.exists(): continue
 
-            # Collect all task descriptions.
-            # This will pick up "Aufgabe.md" as 'Aufgabe', and "Aufgabe1a.md" as 'Aufgabe1a', etc.
             tasks = {f.stem: f.read_text(encoding='utf-8') for f in aufg_path.glob("Aufgabe*.md")}
-
-            # Collect all material texts
             materials_text = "\n\n".join(
                 [f"--- {m.stem} ---\n{m.read_text(encoding='utf-8')}"
                  for m in aufg_path.glob("M*.md")])
 
             max_points_map = parse_punkte_file(aufg_path / "Punkte.md")
+            # --- NEW DEBUGGING PRINT ---
+            print(f"DEBUG: Parsed max points for {test_path.relative_to(root_path)}: {max_points_map}")
+
+            if not max_points_map:
+                print(
+                    f"Warning: Could not parse any points from {aufg_path / 'Punkte.md'}. Skipping all tasks in this test.")
+                continue
 
             for student_dir in test_path.iterdir():
                 if student_dir.is_dir() and student_dir.name.startswith("P"):
                     actual_points_map = parse_erhaltene_punkte(student_dir)
 
-                    # Iterate through student answer files
+                    # --- NEW DEBUGGING PRINT ---
+                    print(f"DEBUG: Parsed actual points for {student_dir.relative_to(root_path)}: {actual_points_map}")
+
+                    if not actual_points_map:
+                        print(
+                            f"Warning: Could not parse any points from {student_dir / 'ErhaltenePunkte.md'}. Skipping this student.")
+                        continue
+
                     for student_answer_file in student_dir.glob("Aufgabe*.md"):
-                        task_name = student_answer_file.stem  # This will be "Aufgabe" for Aufgabe.md
-                        # Or "Aufgabe1a" for Aufgabe1a.md
+                        task_name = student_answer_file.stem
+
                         if task_name in tasks:
                             max_points = max_points_map.get(task_name)
                             actual_points = actual_points_map.get(task_name)
 
                             if max_points is None or actual_points is None:
-                                print(f"Warning: Missing points data for '{task_name}' in {student_dir}. Skipping job.")
+                                print(
+                                    f"Warning: Missing points data for task '{task_name}' in student dir '{student_dir}'. Skipping job.")
                                 continue
 
                             grading_jobs.append({
                                 "job_id": f"{subject_path.name}_{test_path.name}_{task_name}_{student_dir.name}",
-                                "subject": subject_path.name,
-                                "task_name": task_name,  # Store task name for potential future filtering/analysis
+                                "subject": subject_path.name, "task_name": task_name,
                                 "student_answer": student_answer_file.read_text(encoding='utf-8'),
-                                "task_text": tasks[task_name],
-                                "materials_text": materials_text,
-                                "max_points": max_points,
-                                "actual_points": actual_points
+                                "task_text": tasks[task_name], "materials_text": materials_text,
+                                "max_points": max_points, "actual_points": actual_points
                             })
     print(f"Found {len(grading_jobs)} individual student answers to grade.")
     return grading_jobs
