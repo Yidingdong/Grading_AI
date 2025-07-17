@@ -2,7 +2,6 @@ import streamlit as st
 from frontendData import session, User, Course, Enrollment
 import pandas as pd
 
-# --- Design update: Add clear title and section headers ---
 st.title("➕ Allocate a New Course")
 
 if not st.session_state.get("logged_in") or st.session_state.get("role") != "Teacher":
