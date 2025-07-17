@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 import re
-import numpy as np  # Import numpy for color mapping
+import numpy as np
 
 # --- CONFIGURATION ---
 RESULTS_FILE = Path("./benchmark_grading_results_optimized.csv")
@@ -41,7 +41,7 @@ def plot_winners_summary(winners):
     for category, winner in winners.items():
         cell_text.append([category, winner])
         if category == "Overall Best":
-            row_colours.append(['#FFFACD', '#FFFACD'])  # Lemon Chiffon for the highlight
+            row_colours.append(['#FFFACD', '#FFFACD'])
         else:
             row_colours.append(['white', 'white'])
 
@@ -49,7 +49,7 @@ def plot_winners_summary(winners):
         cellText=cell_text,
         colLabels=['Category', 'Winner'],
         loc='center',
-        cellLoc='left',  # Align text to the left for readability
+        cellLoc='left',
         colWidths=[0.4, 0.6],
         cellColours=row_colours
     )
@@ -58,19 +58,15 @@ def plot_winners_summary(winners):
     table.set_fontsize(16)
     table.scale(1.2, 2.0)
 
-    # Style table cells for a professional look
     for (i, j), cell in table.get_celld().items():
         cell.set_edgecolor('black')
-        cell.PAD = 0.05  # Add some padding to the left of the text
+        cell.PAD = 0.05
 
-        # Header styling
         if i == 0:
             cell.set_text_props(weight='bold', color='white', ha='center')
             cell.set_facecolor('#4682B4')
-        # Overall winner row styling
         elif i == len(winners):
             cell.set_text_props(weight='bold', ha='left')
-        # Other content cells
         else:
             cell.set_text_props(ha='left')
 
@@ -325,7 +321,6 @@ def plot_grading_tendency_chart(df, model_order):
 
     bias_by_subject = successful_df.groupby(['subject', 'model'])['percent_point_bias'].mean().unstack()
 
-    # Reorder columns to match the main model order for consistency
     if not bias_by_subject.empty:
         bias_by_subject = bias_by_subject.reindex(columns=model_order, fill_value=0)
 
@@ -335,7 +330,7 @@ def plot_grading_tendency_chart(df, model_order):
 
     bias_by_subject.plot(
         kind='barh',
-        figsize=(12, max(6, len(bias_by_subject) * 1.5)),  # Dynamic height
+        figsize=(12, max(6, len(bias_by_subject) * 1.5)),
         width=0.8,
         colormap='coolwarm_r'
     )
