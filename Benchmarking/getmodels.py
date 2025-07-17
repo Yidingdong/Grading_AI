@@ -56,7 +56,6 @@ def get_and_filter_models():
 
         print(f"Found {len(all_models)} chat models.")
 
-        # Filter the list
         models_to_test = [
             model for model in all_models if model not in MODELS_TO_EXCLUDE
         ]
@@ -103,7 +102,7 @@ PROMPT_TEMPLATES = {
 }
 
 
-# --- 4. CORE SCRIPT LOGIC (Unchanged) ---
+# --- 4. CORE SCRIPT LOGIC ---
 
 def read_file_content(filepath):
     try:
