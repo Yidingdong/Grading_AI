@@ -2,7 +2,6 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install curl for HEALTHCHECK instruction
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 COPY ./Frontend/requirements.txt .
@@ -28,7 +27,6 @@ ENV MONGO_USER_FRONTEND=root
 ENV MONGO_PASSWORD_FRONTEND=example
 ENV MONGO_DB_NAME_FRONTEND=grading_ai_frontend
 ENV MONGO_FILES_COLLECTION_FRONTEND=uploaded_material
-# For frontend to call pdf processor
 ENV PDF_PROCESSOR_URL=http://pdf-processor-service:5003
 
 HEALTHCHECK --interval=20s --timeout=10s --start-period=10s --retries=3 \
