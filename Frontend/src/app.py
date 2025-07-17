@@ -16,7 +16,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Configuration (no changes) ---
+# --- Configuration ---
 MONGO_HOST = os.getenv("MONGO_HOST", "mongodb-server")
 MONGO_USER_FRONTEND = os.getenv("MONGO_USER_FRONTEND", "root")
 MONGO_PASSWORD_FRONTEND = os.getenv("MONGO_PASSWORD_FRONTEND", "example")
@@ -44,7 +44,7 @@ except Exception as e:
     st.error(f"MongoDB/GridFS Connection Error (Frontend): {e}. Application cannot start.")
     st.stop()
 
-# --- Session State & Auth Functions (no changes) ---
+# --- Session State & Auth Functions ---
 if "logged_in" not in st.session_state: st.session_state.logged_in = False
 if "role" not in st.session_state: st.session_state.role = None
 if "username" not in st.session_state: st.session_state.username = None
@@ -75,7 +75,7 @@ def logout_action():
     st.session_state.logged_in = False; st.session_state.role = None
     st.success("You have been logged out."); st.rerun()
 
-# --- Page Navigation & Helper Functions (no changes) ---
+# --- Page Navigation & Helper Functions ---
 profile_page_nav = st.Page("Profile.py", title="User Profile", icon="👤")
 course_allocation_page_nav = st.Page("courses/allocation.py", title="Allocate New Course", icon="➕")
 my_courses_page_nav = st.Page("courses/my_courses.py", title="List My Courses Overview", icon="🎒")
@@ -380,7 +380,7 @@ def _generate_student_course_page_layout(course_obj, enrollment_obj):
     else:
         st.info("You have not submitted an answer sheet for this course.")
 
-# --- Page Callables & Main App Flow (no changes) ---
+# --- Page Callables & Main App Flow ---
 def create_teacher_course_page_callable(course_obj):
     def specific_teacher_course_page(): _generate_teacher_course_page_layout(course_obj)
     specific_teacher_course_page.__name__ = f"teacher_course_view_{course_obj.course_id}"
