@@ -89,15 +89,14 @@ def plot_accuracy_chart(stats_df, successful_df):
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(10, 8))
 
+    bar_width = 0.25 if len(stats_df.index) == 1 else 0.8
+
     sns.barplot(
         x=stats_df.index, y='mean_error', data=stats_df,
         palette='viridis_r', ax=ax, alpha=0.4, errorbar=None,
+        width=bar_width,
         zorder=1
     )
-
-    # --- UPDATED --- Set a much narrower max width for single-model case
-    if len(stats_df.index) == 1:
-        ax.set_xlim(-0.25, 0.25)
 
     sns.swarmplot(
         x='model', y='grading_error_percent', data=successful_df,
@@ -133,14 +132,13 @@ def plot_latency_chart(stats_df, raw_df):
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(10, 8))
 
+    bar_width = 0.25 if len(stats_df.index) == 1 else 0.8
+
     sns.barplot(
         x=stats_df.index, y='median_latency', data=stats_df,
-        palette='coolwarm', ax=ax, alpha=0.4, errorbar=None
+        palette='coolwarm', ax=ax, alpha=0.4, errorbar=None,
+        width=bar_width
     )
-
-    # --- UPDATED --- Set a much narrower max width for single-model case
-    if len(stats_df.index) == 1:
-        ax.set_xlim(-0.25, 0.25)
 
     sns.swarmplot(
         x='model', y='latency_seconds', data=latency_data,
@@ -170,13 +168,16 @@ def plot_token_usage_chart(stats_df):
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(10, 8))
 
-    ax.bar(token_data.index, token_data['avg_input_tokens'], color='#3B82F6', label='Input Tokens')
-    ax.bar(token_data.index, token_data['avg_output_tokens'], bottom=token_data['avg_input_tokens'], color='#F97316',
+    # --- UPDATED --- Set bar width and ALSO axis limits for matplotlib
+    bar_width = 0.25 if len(token_data.index) == 1 else 0.8
+
+    ax.bar(token_data.index, token_data['avg_input_tokens'], width=bar_width, color='#3B82F6', label='Input Tokens')
+    ax.bar(token_data.index, token_data['avg_output_tokens'], width=bar_width, bottom=token_data['avg_input_tokens'],
+           color='#F97316',
            label='Output Tokens')
 
-    # --- UPDATED --- Set a much narrower max width for single-model case
     if len(token_data.index) == 1:
-        ax.set_xlim(-0.25, 0.25)
+        ax.set_xlim(-0.5, 0.5)  # Constrain axis to make the narrow bar look good
 
     ax.set_title('Average Token Usage per Model (Efficiency)', fontsize=18, weight='bold')
     ax.set_xlabel('Model', fontsize=14)
