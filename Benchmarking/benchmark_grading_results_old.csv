@@ -1,0 +1,681 @@
+job_id,subject,model,prompt_style,max_points,actual_points,ai_evaluation_json,latency_seconds,input_tokens,output_tokens,error
+Wirtschaft_HJ1_Aufgabe1a_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 7.5
+}",1.6996464999392629,2575,13,
+Wirtschaft_HJ1_Aufgabe1a_P1,Wirtschaft,gemma3-27b,persona_teacher_json,8.0,8.0,"```json
+{
+  ""awarded_points"": 2.0
+}
+```",2.0123111999128014,2754,21,
+Wirtschaft_HJ1_Aufgabe1a_P1,Wirtschaft,qwen3-235b,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 7.5
+}",1.7117463999893516,3113,14,
+Wirtschaft_HJ1_Aufgabe1a_P1,Wirtschaft,qwen3-30b,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 7.5
+}",1.5404420999111608,3113,14,
+Wirtschaft_HJ1_Aufgabe1a_P1,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 8.0
+}",23.371117100003175,3109,917,
+Wirtschaft_HJ1_Aufgabe1a_P1,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 7.5
+}",9.847711200010963,3109,368,
+Wirtschaft_HJ1_Aufgabe1a_P1,Wirtschaft,gpt-4o,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 7.5
+}",1.542722100042738,3113,14,
+Wirtschaft_HJ1_Aufgabe1b_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",1.476973699987866,2153,13,
+Wirtschaft_HJ1_Aufgabe1b_P1,Wirtschaft,gemma3-27b,persona_teacher_json,2.0,2.0,"```json
+{
+  ""awarded_points"": 1.8
+}
+```",1.981918100034818,2342,21,
+Wirtschaft_HJ1_Aufgabe1b_P1,Wirtschaft,qwen3-235b,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",1.6978108999319375,2633,14,
+Wirtschaft_HJ1_Aufgabe1b_P1,Wirtschaft,qwen3-30b,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",1.5406683000037447,2633,14,
+Wirtschaft_HJ1_Aufgabe1b_P1,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 2.0
+}",32.25107919995207,2629,1312,
+Wirtschaft_HJ1_Aufgabe1b_P1,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",17.13775410002563,2629,655,
+Wirtschaft_HJ1_Aufgabe1b_P1,Wirtschaft,gpt-4o,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",1.534755399916321,2633,14,
+Wirtschaft_HJ1_Aufgabe2_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",1.3781084000365809,3311,13,
+Wirtschaft_HJ1_Aufgabe2_P1,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,12.0,"```json
+{
+  ""awarded_points"": 10.5
+}
+```",2.01672710001003,3577,22,
+Wirtschaft_HJ1_Aufgabe2_P1,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 12.5
+}",1.728580700000748,4100,15,
+Wirtschaft_HJ1_Aufgabe2_P1,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",1.0424145999131724,4100,15,
+Wirtschaft_HJ1_Aufgabe2_P1,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 12.5
+}",18.108699900098145,4096,678,
+Wirtschaft_HJ1_Aufgabe2_P1,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 11.5
+}",20.48477159999311,4096,803,
+Wirtschaft_HJ1_Aufgabe2_P1,Wirtschaft,gpt-4o,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",1.0247310000704601,4100,15,
+Wirtschaft_HJ1_Aufgabe1a_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,4.0,"{
+  ""awarded_points"": 6.5
+}",0.948080400004983,2537,13,
+Wirtschaft_HJ1_Aufgabe1a_P2,Wirtschaft,gemma3-27b,persona_teacher_json,8.0,4.0,"```json
+{
+  ""awarded_points"": 2.0
+}
+```",1.9686669000657275,2742,21,
+Wirtschaft_HJ1_Aufgabe1a_P2,Wirtschaft,qwen3-235b,persona_teacher_json,8.0,4.0,"{
+  ""awarded_points"": 5.5
+}",1.6842601000098512,3083,14,
+Wirtschaft_HJ1_Aufgabe1a_P2,Wirtschaft,qwen3-30b,persona_teacher_json,8.0,4.0,"{
+  ""awarded_points"": 4.5
+}",0.9848960000090301,3083,14,
+Wirtschaft_HJ1_Aufgabe1a_P2,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,8.0,4.0,"{
+  ""awarded_points"": 6.5
+}",24.848985100048594,3079,980,
+Wirtschaft_HJ1_Aufgabe1a_P2,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,8.0,4.0,"{
+  ""awarded_points"": 4.5
+}",16.120620000059716,3079,633,
+Wirtschaft_HJ1_Aufgabe1a_P2,Wirtschaft,gpt-4o,persona_teacher_json,8.0,4.0,"{
+  ""awarded_points"": 4.5
+}",1.009219800005667,3083,14,
+Wirtschaft_HJ1_Aufgabe1b_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.0
+}",1.3265028999885544,2121,13,
+Wirtschaft_HJ1_Aufgabe1b_P2,Wirtschaft,gemma3-27b,persona_teacher_json,2.0,2.0,"```json
+{
+  ""awarded_points"": 1.0
+}
+```",1.9748790999874473,2311,21,
+Wirtschaft_HJ1_Aufgabe1b_P2,Wirtschaft,qwen3-235b,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",1.677368599921465,2594,14,
+Wirtschaft_HJ1_Aufgabe1b_P2,Wirtschaft,qwen3-30b,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.0
+}",0.9848783999914303,2594,14,
+Wirtschaft_HJ1_Aufgabe1b_P2,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 2.0
+}",10.59361009998247,2590,473,
+Wirtschaft_HJ1_Aufgabe1b_P2,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",12.057900100015104,2590,472,
+Wirtschaft_HJ1_Aufgabe1b_P2,Wirtschaft,gpt-4o,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.0
+}",1.017286999966018,2594,14,
+Wirtschaft_HJ1_Aufgabe2_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 10.5
+}",1.2650667999405414,2919,13,
+Wirtschaft_HJ1_Aufgabe2_P2,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,10.0,"```json
+{
+  ""awarded_points"": 8.0
+}
+```",1.9449594999896362,3168,21,
+Wirtschaft_HJ1_Aufgabe2_P2,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 10.5
+}",0.7502681000623852,3616,15,
+Wirtschaft_HJ1_Aufgabe2_P2,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 11.5
+}",1.0057315999874845,3616,15,
+Wirtschaft_HJ1_Aufgabe2_P2,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 12.5
+}",23.850750599987805,3612,1061,
+Wirtschaft_HJ1_Aufgabe2_P2,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 10.5
+}",12.375237499945797,3612,483,
+Wirtschaft_HJ1_Aufgabe2_P2,Wirtschaft,gpt-4o,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 11.5
+}",0.9956508000614122,3616,15,
+Wirtschaft_HJ1_Aufgabe1a_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 7.0
+}",1.2061950999777764,2436,13,
+Wirtschaft_HJ1_Aufgabe1a_P3,Wirtschaft,gemma3-27b,persona_teacher_json,8.0,7.0,"```json
+{
+  ""awarded_points"": 3.0
+}
+```",1.9582180000143126,2625,21,
+Wirtschaft_HJ1_Aufgabe1a_P3,Wirtschaft,qwen3-235b,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 7.5
+}",0.742848000023514,2960,14,
+Wirtschaft_HJ1_Aufgabe1a_P3,Wirtschaft,qwen3-30b,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 7.5
+}",0.9877965999767184,2960,14,
+Wirtschaft_HJ1_Aufgabe1a_P3,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 7.5
+}",11.207061600056477,2956,502,
+Wirtschaft_HJ1_Aufgabe1a_P3,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 8.0
+}",15.49021369998809,2956,610,
+Wirtschaft_HJ1_Aufgabe1a_P3,Wirtschaft,gpt-4o,persona_teacher_json,8.0,7.0,"{
+  ""awarded_points"": 7.5
+}",1.0017266999930143,2960,14,
+Wirtschaft_HJ1_Aufgabe1b_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.0
+}",1.240784200024791,2131,13,
+Wirtschaft_HJ1_Aufgabe1b_P3,Wirtschaft,gemma3-27b,persona_teacher_json,2.0,2.0,"```json
+{
+  ""awarded_points"": 1.0
+}
+```",1.9540769000304863,2318,21,
+Wirtschaft_HJ1_Aufgabe1b_P3,Wirtschaft,qwen3-235b,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",0.7069643998984247,2614,14,
+Wirtschaft_HJ1_Aufgabe1b_P3,Wirtschaft,qwen3-30b,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.0
+}",1.0113881999859586,2614,14,
+Wirtschaft_HJ1_Aufgabe1b_P3,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",8.572778400033712,2610,379,
+Wirtschaft_HJ1_Aufgabe1b_P3,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 0.5
+}",12.97135360003449,2610,506,
+Wirtschaft_HJ1_Aufgabe1b_P3,Wirtschaft,gpt-4o,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.0
+}",1.011768199969083,2614,14,
+Wirtschaft_HJ1_Aufgabe2_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",1.1025694999843836,2570,13,
+Wirtschaft_HJ1_Aufgabe2_P3,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,12.0,"```json
+{
+  ""awarded_points"": 7.0
+}
+```",1.9492564999964088,2778,21,
+Wirtschaft_HJ1_Aufgabe2_P3,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",0.7343475000234321,3153,15,
+Wirtschaft_HJ1_Aufgabe2_P3,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",0.9901901999255642,3153,15,
+Wirtschaft_HJ1_Aufgabe2_P3,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",14.314131499966606,3149,643,
+Wirtschaft_HJ1_Aufgabe2_P3,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",19.17742629989516,3149,751,
+Wirtschaft_HJ1_Aufgabe2_P3,Wirtschaft,gpt-4o,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",0.993164399988018,3153,15,
+Wirtschaft_HJ1_Aufgabe1a_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,3.0,"{
+  ""awarded_points"": 5.0
+}",1.2138109999941662,2398,13,
+Wirtschaft_HJ1_Aufgabe1a_P4,Wirtschaft,gemma3-27b,persona_teacher_json,8.0,3.0,"```json
+{
+  ""awarded_points"": 7.0
+}
+```",1.9457455000374466,2601,21,
+Wirtschaft_HJ1_Aufgabe1a_P4,Wirtschaft,qwen3-235b,persona_teacher_json,8.0,3.0,"{
+  ""awarded_points"": 3.5
+}",0.6764291999861598,2915,14,
+Wirtschaft_HJ1_Aufgabe1a_P4,Wirtschaft,qwen3-30b,persona_teacher_json,8.0,3.0,"{
+  ""awarded_points"": 2.5
+}",1.00735369999893,2915,14,
+Wirtschaft_HJ1_Aufgabe1a_P4,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,8.0,3.0,"{
+  ""awarded_points"": 3.5
+}",17.657850899966434,2911,786,
+Wirtschaft_HJ1_Aufgabe1a_P4,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,8.0,3.0,"{
+  ""awarded_points"": 3.5
+}",9.833806200069375,2911,385,
+Wirtschaft_HJ1_Aufgabe1a_P4,Wirtschaft,gpt-4o,persona_teacher_json,8.0,3.0,"{
+  ""awarded_points"": 2.5
+}",0.9716056999750435,2915,14,
+Wirtschaft_HJ1_Aufgabe1b_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,1.0,"{
+  ""awarded_points"": 1.0
+}",1.0218876999570057,2123,13,
+Wirtschaft_HJ1_Aufgabe1b_P4,Wirtschaft,gemma3-27b,persona_teacher_json,2.0,1.0,"```json
+{
+  ""awarded_points"": 1.5
+}
+```",1.9497877000831068,2315,21,
+Wirtschaft_HJ1_Aufgabe1b_P4,Wirtschaft,qwen3-235b,persona_teacher_json,2.0,1.0,"{
+  ""awarded_points"": 1.0
+}",0.7294800999807194,2606,14,
+Wirtschaft_HJ1_Aufgabe1b_P4,Wirtschaft,qwen3-30b,persona_teacher_json,2.0,1.0,"{
+  ""awarded_points"": 0.5
+}",1.0061583000933751,2606,14,
+Wirtschaft_HJ1_Aufgabe1b_P4,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,2.0,1.0,"{
+  ""awarded_points"": 0.5
+}",13.895805699983612,2602,623,
+Wirtschaft_HJ1_Aufgabe1b_P4,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,2.0,1.0,"{
+  ""awarded_points"": 0.0
+}",11.463240000070073,2602,450,
+Wirtschaft_HJ1_Aufgabe1b_P4,Wirtschaft,gpt-4o,persona_teacher_json,2.0,1.0,"{
+  ""awarded_points"": 0.5
+}",0.5254027999471873,2606,14,
+Wirtschaft_HJ1_Aufgabe2_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 11.0
+}",1.243627700023353,2814,13,
+Wirtschaft_HJ1_Aufgabe2_P4,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 4.0
+}",1.621432299958542,3049,16,
+Wirtschaft_HJ1_Aufgabe2_P4,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",0.7489104999694973,3483,15,
+Wirtschaft_HJ1_Aufgabe2_P4,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 9.0
+}",0.9432772999862209,3483,14,
+Wirtschaft_HJ1_Aufgabe2_P4,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 13.0
+}",31.61292870005127,3479,1409,
+Wirtschaft_HJ1_Aufgabe2_P4,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 8.5
+}",21.19982809992507,3479,833,
+Wirtschaft_HJ1_Aufgabe2_P4,Wirtschaft,gpt-4o,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 9.0
+}",0.5405335000250489,3483,14,
+Wirtschaft_HJ1_Aufgabe1a_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 6.5
+}",1.2091128999600187,2330,13,
+Wirtschaft_HJ1_Aufgabe1a_P5,Wirtschaft,gemma3-27b,persona_teacher_json,8.0,8.0,"```json
+{
+  ""awarded_points"": 6.5
+}
+```",1.9379888999974355,2516,21,
+Wirtschaft_HJ1_Aufgabe1a_P5,Wirtschaft,qwen3-235b,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 5.5
+}",0.706285799969919,2832,14,
+Wirtschaft_HJ1_Aufgabe1a_P5,Wirtschaft,qwen3-30b,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 4.5
+}",0.9445674000307918,2832,14,
+Wirtschaft_HJ1_Aufgabe1a_P5,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 5.5
+}",9.57022919994779,2828,427,
+Wirtschaft_HJ1_Aufgabe1a_P5,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 5.5
+}",18.638424100005068,2828,734,
+Wirtschaft_HJ1_Aufgabe1a_P5,Wirtschaft,gpt-4o,persona_teacher_json,8.0,8.0,"{
+  ""awarded_points"": 4.5
+}",0.5312209000112489,2832,14,
+Wirtschaft_HJ1_Aufgabe1b_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",1.093978299992159,2194,13,
+Wirtschaft_HJ1_Aufgabe1b_P5,Wirtschaft,gemma3-27b,persona_teacher_json,2.0,2.0,"```json
+{
+  ""awarded_points"": 1.8
+}
+```",1.927754700067453,2384,21,
+Wirtschaft_HJ1_Aufgabe1b_P5,Wirtschaft,qwen3-235b,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 2.0
+}",0.7033006000565365,2679,14,
+Wirtschaft_HJ1_Aufgabe1b_P5,Wirtschaft,qwen3-30b,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",0.9495563000673428,2679,14,
+Wirtschaft_HJ1_Aufgabe1b_P5,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 2.0
+}",8.89946119999513,2675,395,
+Wirtschaft_HJ1_Aufgabe1b_P5,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 2.0
+}",25.355867599952035,2675,1012,
+Wirtschaft_HJ1_Aufgabe1b_P5,Wirtschaft,gpt-4o,persona_teacher_json,2.0,2.0,"{
+  ""awarded_points"": 1.5
+}",0.5073850000044331,2679,14,
+Wirtschaft_HJ1_Aufgabe2_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",1.3220188999548554,2725,13,
+Wirtschaft_HJ1_Aufgabe2_P5,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,12.0,"```json
+{
+  ""awarded_points"": 7.0
+}
+```",1.9259483999339864,2964,21,
+Wirtschaft_HJ1_Aufgabe2_P5,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 9.5
+}",0.6945183000061661,3358,14,
+Wirtschaft_HJ1_Aufgabe2_P5,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 9.5
+}",0.9376533000031486,3358,14,
+Wirtschaft_HJ1_Aufgabe2_P5,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 10.5
+}",11.433108300087042,3354,514,
+Wirtschaft_HJ1_Aufgabe2_P5,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 7.5
+}",16.31571100000292,3354,641,
+Wirtschaft_HJ1_Aufgabe2_P5,Wirtschaft,gpt-4o,persona_teacher_json,14.0,12.0,"{
+  ""awarded_points"": 9.5
+}",0.5081481999950483,3358,14,
+Wirtschaft_HJ2_Aufgabe1_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.5
+}",1.1549568999325857,1376,13,
+Wirtschaft_HJ2_Aufgabe1_P1,Wirtschaft,gemma3-27b,persona_teacher_json,4.0,3.0,"```json
+{
+  ""awarded_points"": 2.5
+}
+```",1.1198991000419483,1427,21,
+Wirtschaft_HJ2_Aufgabe1_P1,Wirtschaft,qwen3-235b,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.5
+}",0.7207495999755338,1661,14,
+Wirtschaft_HJ2_Aufgabe1_P1,Wirtschaft,qwen3-30b,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.0
+}",0.9406834000255913,1661,14,
+Wirtschaft_HJ2_Aufgabe1_P1,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.5
+}",9.399332199944183,1657,418,
+Wirtschaft_HJ2_Aufgabe1_P1,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 4.0
+}",9.033360800007358,1657,354,
+Wirtschaft_HJ2_Aufgabe1_P1,Wirtschaft,gpt-4o,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.0
+}",1.0284056999953464,1661,14,
+Wirtschaft_HJ2_Aufgabe2_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 10.0
+}",1.246062699938193,1810,13,
+Wirtschaft_HJ2_Aufgabe2_P1,Wirtschaft,gemma3-27b,persona_teacher_json,12.0,11.0,"```json
+{
+  ""awarded_points"": 9.5
+}
+```",1.1047149000223726,1896,21,
+Wirtschaft_HJ2_Aufgabe2_P1,Wirtschaft,qwen3-235b,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",0.7792958999052644,2196,15,
+Wirtschaft_HJ2_Aufgabe2_P1,Wirtschaft,qwen3-30b,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 9.5
+}",0.947695599985309,2196,14,
+Wirtschaft_HJ2_Aufgabe2_P1,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 10.5
+}",9.61127170000691,2192,428,
+Wirtschaft_HJ2_Aufgabe2_P1,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 10.5
+}",15.599699899903499,2192,630,
+Wirtschaft_HJ2_Aufgabe2_P1,Wirtschaft,gpt-4o,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 9.5
+}",1.0152060000691563,2196,14,
+Wirtschaft_HJ2_Aufgabe3_P1,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,13.0,"{
+  ""awarded_points"": 12.0
+}",3.021612000069581,2200,13,
+Wirtschaft_HJ2_Aufgabe3_P1,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,13.0,"```json
+{
+  ""awarded_points"": 8.5
+}
+```",1.096242499887012,2316,21,
+Wirtschaft_HJ2_Aufgabe3_P1,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,13.0,"{
+  ""awarded_points"": 12.5
+}",0.7681359999114648,2697,15,
+Wirtschaft_HJ2_Aufgabe3_P1,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,13.0,"{
+  ""awarded_points"": 12.5
+}",0.9815786000108346,2697,15,
+Wirtschaft_HJ2_Aufgabe3_P1,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,13.0,"{
+  ""awarded_points"": 13.5
+}",14.10682149999775,2693,622,
+Wirtschaft_HJ2_Aufgabe3_P1,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,13.0,"{
+  ""awarded_points"": 8.5
+}",14.91022899991367,2693,606,
+Wirtschaft_HJ2_Aufgabe3_P1,Wirtschaft,gpt-4o,persona_teacher_json,14.0,13.0,"{
+  ""awarded_points"": 11.5
+}",1.023219299968332,2697,15,
+Wirtschaft_HJ2_Aufgabe1_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 2.0
+}",1.1809031000593677,1296,13,
+Wirtschaft_HJ2_Aufgabe1_P2,Wirtschaft,gemma3-27b,persona_teacher_json,4.0,3.0,"```json
+{
+  ""awarded_points"": 2.5
+}
+```",1.0937339999945834,1353,21,
+Wirtschaft_HJ2_Aufgabe1_P2,Wirtschaft,qwen3-235b,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.0
+}",0.7156483000144362,1569,14,
+Wirtschaft_HJ2_Aufgabe1_P2,Wirtschaft,qwen3-30b,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 2.5
+}",0.9483112000161782,1569,14,
+Wirtschaft_HJ2_Aufgabe1_P2,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 4.0
+}",7.913901300053112,1565,354,
+Wirtschaft_HJ2_Aufgabe1_P2,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.5
+}",12.046539600007236,1565,482,
+Wirtschaft_HJ2_Aufgabe1_P2,Wirtschaft,gpt-4o,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 2.5
+}",0.5229247999377549,1569,14,
+Wirtschaft_HJ2_Aufgabe2_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 10.0
+}",1.3791225000750273,1998,13,
+Wirtschaft_HJ2_Aufgabe2_P2,Wirtschaft,gemma3-27b,persona_teacher_json,12.0,11.0,"```json
+{
+  ""awarded_points"": 9.5
+}
+```",1.0950463999761268,2076,21,
+Wirtschaft_HJ2_Aufgabe2_P2,Wirtschaft,qwen3-235b,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",0.7405560000333935,2434,15,
+Wirtschaft_HJ2_Aufgabe2_P2,Wirtschaft,qwen3-30b,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",1.4942671000026166,2434,15,
+Wirtschaft_HJ2_Aufgabe2_P2,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",24.87388520000968,2430,1124,
+Wirtschaft_HJ2_Aufgabe2_P2,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",18.768496899981983,2430,801,
+Wirtschaft_HJ2_Aufgabe2_P2,Wirtschaft,gpt-4o,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",0.5467433999292552,2434,15,
+Wirtschaft_HJ2_Aufgabe3_P2,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 11.0
+}",1.2203298000385985,2158,13,
+Wirtschaft_HJ2_Aufgabe3_P2,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,8.0,"```json
+{
+  ""awarded_points"": 9.5
+}
+```",1.0818171999417245,2260,21,
+Wirtschaft_HJ2_Aufgabe3_P2,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 9.5
+}",0.7629023999907076,2650,14,
+Wirtschaft_HJ2_Aufgabe3_P2,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 9.0
+}",0.5329253000672907,2650,14,
+Wirtschaft_HJ2_Aufgabe3_P2,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 10.5
+}",16.798682099906728,2646,759,
+Wirtschaft_HJ2_Aufgabe3_P2,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 11.5
+}",19.98122560000047,2646,878,
+Wirtschaft_HJ2_Aufgabe3_P2,Wirtschaft,gpt-4o,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 9.5
+}",0.5130213000811636,2650,14,
+Wirtschaft_HJ2_Aufgabe1_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 4.0
+}",1.2431750999530777,1331,13,
+Wirtschaft_HJ2_Aufgabe1_P3,Wirtschaft,gemma3-27b,persona_teacher_json,4.0,3.0,"```json
+{
+  ""awarded_points"": 3.5
+}
+```",1.0676441999385133,1386,21,
+Wirtschaft_HJ2_Aufgabe1_P3,Wirtschaft,qwen3-235b,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 4.0
+}",0.7672231000615284,1605,14,
+Wirtschaft_HJ2_Aufgabe1_P3,Wirtschaft,qwen3-30b,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.5
+}",0.5328798999544233,1605,14,
+Wirtschaft_HJ2_Aufgabe1_P3,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 4.0
+}",7.917102799983695,1601,356,
+Wirtschaft_HJ2_Aufgabe1_P3,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 4.0
+}",8.53957999998238,1601,341,
+Wirtschaft_HJ2_Aufgabe1_P3,Wirtschaft,gpt-4o,persona_teacher_json,4.0,3.0,"{
+  ""awarded_points"": 3.5
+}",0.5114646999863908,1605,14,
+Wirtschaft_HJ2_Aufgabe2_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,10.0,"{
+  ""awarded_points"": 10.5
+}",1.2831749999895692,1812,13,
+Wirtschaft_HJ2_Aufgabe2_P3,Wirtschaft,gemma3-27b,persona_teacher_json,12.0,10.0,"{
+  ""awarded_points"": 9.5
+}",0.8753851000219584,1886,16,
+Wirtschaft_HJ2_Aufgabe2_P3,Wirtschaft,qwen3-235b,persona_teacher_json,12.0,10.0,"{
+  ""awarded_points"": 9.5
+}",0.7216446999227628,2212,14,
+Wirtschaft_HJ2_Aufgabe2_P3,Wirtschaft,qwen3-30b,persona_teacher_json,12.0,10.0,"{
+  ""awarded_points"": 9.5
+}",0.5347325999755412,2212,14,
+Wirtschaft_HJ2_Aufgabe2_P3,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,12.0,10.0,"{
+  ""awarded_points"": 12.0
+}",16.815999799990095,2208,763,
+Wirtschaft_HJ2_Aufgabe2_P3,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,12.0,10.0,"{
+  ""awarded_points"": 10.5
+}",16.02386529999785,2208,704,
+Wirtschaft_HJ2_Aufgabe2_P3,Wirtschaft,gpt-4o,persona_teacher_json,12.0,10.0,"{
+  ""awarded_points"": 9.5
+}",0.5062795000849292,2212,14,
+Wirtschaft_HJ2_Aufgabe3_P3,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 10.5
+}",1.2609693999402225,1924,13,
+Wirtschaft_HJ2_Aufgabe3_P3,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 10.5
+}",0.9002714999951422,2013,17,
+Wirtschaft_HJ2_Aufgabe3_P3,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 11.5
+}",0.6636529000243172,2333,15,
+Wirtschaft_HJ2_Aufgabe3_P3,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 10.5
+}",0.5433767000213265,2333,15,
+Wirtschaft_HJ2_Aufgabe3_P3,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 13.5
+}",36.589802199974656,2329,1656,
+Wirtschaft_HJ2_Aufgabe3_P3,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 12.5
+}",12.024766000104137,2329,509,
+Wirtschaft_HJ2_Aufgabe3_P3,Wirtschaft,gpt-4o,persona_teacher_json,14.0,8.0,"{
+  ""awarded_points"": 10.5
+}",0.513198799919337,2333,15,
+Wirtschaft_HJ2_Aufgabe1_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 2.0
+}",1.237249099998735,1265,13,
+Wirtschaft_HJ2_Aufgabe1_P4,Wirtschaft,gemma3-27b,persona_teacher_json,4.0,4.0,"```json
+{
+  ""awarded_points"": 2.5
+}
+```",1.0664065999444574,1328,21,
+Wirtschaft_HJ2_Aufgabe1_P4,Wirtschaft,qwen3-235b,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.0
+}",0.6327295999508351,1532,14,
+Wirtschaft_HJ2_Aufgabe1_P4,Wirtschaft,qwen3-30b,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 2.5
+}",0.5230537999887019,1532,14,
+Wirtschaft_HJ2_Aufgabe1_P4,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 4.0
+}",11.17950299999211,1528,507,
+Wirtschaft_HJ2_Aufgabe1_P4,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.0
+}",18.503956200089306,1528,922,
+Wirtschaft_HJ2_Aufgabe1_P4,Wirtschaft,gpt-4o,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 2.5
+}",0.5056481999345124,1532,14,
+Wirtschaft_HJ2_Aufgabe2_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,8.0,"{
+  ""awarded_points"": 10.0
+}",1.2057772000553086,1827,13,
+Wirtschaft_HJ2_Aufgabe2_P4,Wirtschaft,gemma3-27b,persona_teacher_json,12.0,8.0,"```json
+{
+  ""awarded_points"": 7.5
+}
+```",1.0712575000943616,1917,21,
+Wirtschaft_HJ2_Aufgabe2_P4,Wirtschaft,qwen3-235b,persona_teacher_json,12.0,8.0,"{
+  ""awarded_points"": 9.5
+}",0.7212959000607952,2249,14,
+Wirtschaft_HJ2_Aufgabe2_P4,Wirtschaft,qwen3-30b,persona_teacher_json,12.0,8.0,"{
+  ""awarded_points"": 7.5
+}",0.5215135999023914,2249,14,
+Wirtschaft_HJ2_Aufgabe2_P4,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,12.0,8.0,"{
+  ""awarded_points"": 9.5
+}",13.47178029990755,2245,614,
+Wirtschaft_HJ2_Aufgabe2_P4,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,12.0,8.0,"{
+  ""awarded_points"": 7.0
+}",15.665530600002967,2245,745,
+Wirtschaft_HJ2_Aufgabe2_P4,Wirtschaft,gpt-4o,persona_teacher_json,12.0,8.0,"{
+  ""awarded_points"": 9.0
+}",0.4655706000048667,2249,14,
+Wirtschaft_HJ2_Aufgabe3_P4,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,9.0,"{
+  ""awarded_points"": 10.0
+}",1.3473482999252155,1955,13,
+Wirtschaft_HJ2_Aufgabe3_P4,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,9.0,"{
+  ""awarded_points"": 9.5
+}",0.8646521000191569,2060,16,
+Wirtschaft_HJ2_Aufgabe3_P4,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,9.0,"{
+  ""awarded_points"": 10.5
+}",0.7460224999813363,2363,15,
+Wirtschaft_HJ2_Aufgabe3_P4,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,9.0,"{
+  ""awarded_points"": 7.5
+}",0.5138004999607801,2363,14,
+Wirtschaft_HJ2_Aufgabe3_P4,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,9.0,"{
+  ""awarded_points"": 12.0
+}",15.385336600011215,2359,695,
+Wirtschaft_HJ2_Aufgabe3_P4,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,9.0,"{
+  ""awarded_points"": 8.5
+}",13.649704199982807,2359,618,
+Wirtschaft_HJ2_Aufgabe3_P4,Wirtschaft,gpt-4o,persona_teacher_json,14.0,9.0,"{
+  ""awarded_points"": 9.0
+}",0.46551290003117174,2363,14,
+Wirtschaft_HJ2_Aufgabe1_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.0
+}",1.1987303000641987,1273,13,
+Wirtschaft_HJ2_Aufgabe1_P5,Wirtschaft,gemma3-27b,persona_teacher_json,4.0,4.0,"```json
+{
+  ""awarded_points"": 3.0
+}
+```",1.06330809998326,1332,21,
+Wirtschaft_HJ2_Aufgabe1_P5,Wirtschaft,qwen3-235b,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.5
+}",0.6911192999687046,1543,14,
+Wirtschaft_HJ2_Aufgabe1_P5,Wirtschaft,qwen3-30b,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.0
+}",0.5224017000291497,1543,14,
+Wirtschaft_HJ2_Aufgabe1_P5,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 4.0
+}",6.38121839996893,1539,284,
+Wirtschaft_HJ2_Aufgabe1_P5,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 2.5
+}",23.05589489999693,1539,1637,
+Wirtschaft_HJ2_Aufgabe1_P5,Wirtschaft,gpt-4o,persona_teacher_json,4.0,4.0,"{
+  ""awarded_points"": 3.0
+}",0.460635400027968,1543,14,
+Wirtschaft_HJ2_Aufgabe2_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 10.0
+}",1.3389235000358894,1968,13,
+Wirtschaft_HJ2_Aufgabe2_P5,Wirtschaft,gemma3-27b,persona_teacher_json,12.0,11.0,"```json
+{
+  ""awarded_points"": 7.5
+}
+```",1.0642283000051975,2046,21,
+Wirtschaft_HJ2_Aufgabe2_P5,Wirtschaft,qwen3-235b,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",0.733737500035204,2365,15,
+Wirtschaft_HJ2_Aufgabe2_P5,Wirtschaft,qwen3-30b,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",0.5990744000300765,2365,15,
+Wirtschaft_HJ2_Aufgabe2_P5,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 11.5
+}",17.541916500078514,2361,817,
+Wirtschaft_HJ2_Aufgabe2_P5,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 12.0
+}",13.931604900048114,2361,681,
+Wirtschaft_HJ2_Aufgabe2_P5,Wirtschaft,gpt-4o,persona_teacher_json,12.0,11.0,"{
+  ""awarded_points"": 10.5
+}",0.49897169996984303,2365,15,
+Wirtschaft_HJ2_Aufgabe3_P5,Wirtschaft,gpt-4o-mini,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 10.0
+}",1.2630816000746563,2014,13,
+Wirtschaft_HJ2_Aufgabe3_P5,Wirtschaft,gemma3-27b,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 9.5
+}",0.8585316999815404,2094,16,
+Wirtschaft_HJ2_Aufgabe3_P5,Wirtschaft,qwen3-235b,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 11.5
+}",0.7323266000021249,2391,15,
+Wirtschaft_HJ2_Aufgabe3_P5,Wirtschaft,qwen3-30b,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 9.5
+}",0.5286273000529036,2391,14,
+Wirtschaft_HJ2_Aufgabe3_P5,Wirtschaft,qwen3-235b-reasoning,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 12.0
+}",22.286939999903552,2387,1135,
+Wirtschaft_HJ2_Aufgabe3_P5,Wirtschaft,qwen3-30b-reasoning,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 8.5
+}",10.239843099960126,2387,468,
+Wirtschaft_HJ2_Aufgabe3_P5,Wirtschaft,gpt-4o,persona_teacher_json,14.0,10.0,"{
+  ""awarded_points"": 10.5
+}",0.49536830000579357,2391,15,
