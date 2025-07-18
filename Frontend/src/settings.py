@@ -51,11 +51,9 @@ st.markdown("---")
 st.subheader("Custom AI Service Configuration")
 st.warning("This is an advanced feature. The credentials you enter here will be used for your current session only and will override the default system configuration.", icon="⚠️")
 
-# Get current values from session state, or default to empty strings
 custom_url = st.session_state.get("custom_api_url", "")
 custom_key = st.session_state.get("custom_api_key", "")
 
-# Create the input fields, their values are directly tied to session_state
 st.session_state.custom_api_url = st.text_input(
     "Custom API Base URL",
     value=custom_url,
@@ -68,16 +66,12 @@ st.session_state.custom_api_key = st.text_input(
     placeholder="Enter your secret key"
 )
 
-# --- MODIFIED: Added Reset Button ---
 if st.button("Reset to Default Configuration", key="reset_api_config_btn"):
-    # Safely remove the custom keys from the session state
     st.session_state.pop("custom_api_url", None)
     st.session_state.pop("custom_api_key", None)
     st.success("Configuration has been reset to the system default.")
-    # Rerun the page to immediately update the input fields and status message
     st.rerun()
 
-# Display a status message based on the session state
 if st.session_state.get("custom_api_url") and st.session_state.get("custom_api_key"):
     st.success(f"Custom AI configuration is active for this session. Target URL: {st.session_state.get('custom_api_url')}")
 else:

@@ -210,7 +210,7 @@ def health_check():
     return jsonify({"status": "ok", "message": "PDF Processor service is healthy"}), 200
 
 
-api.add_resource(ProcessDocument, '/process_submission') # Using /process_submission endpoint for compatibility
+api.add_resource(ProcessDocument, '/process_submission')
 
 def main_cli():
     parser = argparse.ArgumentParser(description="CLI: Extract text/OCR PDF and upload to MongoDB with metadata")

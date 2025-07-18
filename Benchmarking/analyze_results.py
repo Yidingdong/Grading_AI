@@ -95,9 +95,9 @@ def plot_accuracy_chart(stats_df, successful_df):
         zorder=1
     )
 
-    # --- UPDATED --- Set a narrower max width for single-model case
+    # --- UPDATED --- Set a much narrower max width for single-model case
     if len(stats_df.index) == 1:
-        ax.set_xlim(-0.4, 0.4)
+        ax.set_xlim(-0.25, 0.25)
 
     sns.swarmplot(
         x='model', y='grading_error_percent', data=successful_df,
@@ -138,9 +138,9 @@ def plot_latency_chart(stats_df, raw_df):
         palette='coolwarm', ax=ax, alpha=0.4, errorbar=None
     )
 
-    # --- UPDATED --- Set a narrower max width for single-model case
+    # --- UPDATED --- Set a much narrower max width for single-model case
     if len(stats_df.index) == 1:
-        ax.set_xlim(-0.4, 0.4)
+        ax.set_xlim(-0.25, 0.25)
 
     sns.swarmplot(
         x='model', y='latency_seconds', data=latency_data,
@@ -174,9 +174,9 @@ def plot_token_usage_chart(stats_df):
     ax.bar(token_data.index, token_data['avg_output_tokens'], bottom=token_data['avg_input_tokens'], color='#F97316',
            label='Output Tokens')
 
-    # --- UPDATED --- Set a narrower max width for single-model case
+    # --- UPDATED --- Set a much narrower max width for single-model case
     if len(token_data.index) == 1:
-        ax.set_xlim(-0.4, 0.4)
+        ax.set_xlim(-0.25, 0.25)
 
     ax.set_title('Average Token Usage per Model (Efficiency)', fontsize=18, weight='bold')
     ax.set_xlabel('Model', fontsize=14)

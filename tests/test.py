@@ -22,7 +22,7 @@ MYSQL_USER = "user"
 MYSQL_PASSWORD = "password"
 MYSQL_DATABASE = "Informations"
 
-# MongoDB connection details FOR CLEANUP
+# MongoDB connection details for cleanup
 MONGO_HOST = "localhost"
 MONGO_PORT = 27017
 MONGO_ROOT_USER = "root"

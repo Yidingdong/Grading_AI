@@ -37,7 +37,6 @@ except IOError:
     default_api_key = os.getenv("SEEDBOX_API_KEY")
 
 # --- Default OpenAI Client Initialization ---
-# This client will be used if no custom credentials are provided in the request.
 default_client = OpenAI(
     base_url=DEFAULT_API_BASE_URL,
     api_key=default_api_key
@@ -84,7 +83,6 @@ class GradeDocument(Resource):
         if custom_api_url and custom_api_key:
             app.logger.info(f"Using custom API configuration for this request: URL={custom_api_url}")
             try:
-                # Create a temporary, request-specific client
                 request_client = OpenAI(base_url=custom_api_url, api_key=custom_api_key)
             except Exception as e:
                 app.logger.error(f"Failed to initialize custom OpenAI client: {e}")
