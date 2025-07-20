@@ -23,7 +23,7 @@ BASE_URL = "https://api.seedbox.ai/v1"
 
 # Per-model concurrency limits
 MODEL_CONFIG = {
-    "gpt-4o-mini": 50,
+    "gpt-4o-mini": 80,
     "gpt-4o": 10,
     "qwen3-30b": 20,
     "qwen3-235b": 5,
@@ -69,11 +69,17 @@ async def grade_task_worker(semaphore_map, client, job, prompt_name, template, m
 
                 print(f"  -> SUCCESS on job: {job_id} | Model: {model_name} in {end_time - start_time:.2f}s")
                 return {
-                    "job_id": job_id, "subject": job['subject'], "model": model_name, "prompt_style": prompt_name,
-                    "max_points": job['max_points'], "actual_points": job['actual_points'],
+                    "job_id": job_id,
+                    "data_type": job['data_type'],  # ADDED: Pass data_type to results
+                    "subject": job['subject'],
+                    "model": model_name,
+                    "prompt_style": prompt_name,
+                    "max_points": job['max_points'],
+                    "actual_points": job['actual_points'],
                     "ai_evaluation_json": completion.choices[0].message.content,
                     "latency_seconds": end_time - start_time,
-                    "input_tokens": input_tokens, "output_tokens": output_tokens,
+                    "input_tokens": input_tokens,
+                    "output_tokens": output_tokens,
                     "error": None
                 }
             except (APIError, Exception) as e:
@@ -86,10 +92,17 @@ async def grade_task_worker(semaphore_map, client, job, prompt_name, template, m
                 else:
                     print(f"  -> FATAL ERROR on job {job_id} (Status: {error_status}). No more retries.")
                     return {
-                        "job_id": job_id, "subject": job['subject'], "model": model_name, "prompt_style": prompt_name,
-                        "max_points": job['max_points'], "actual_points": job['actual_points'],
-                        "ai_evaluation_json": None, "latency_seconds": -1,
-                        "input_tokens": None, "output_tokens": None,
+                        "job_id": job_id,
+                        "data_type": job['data_type'],  # ADDED: Pass data_type to results, even on error
+                        "subject": job['subject'],
+                        "model": model_name,
+                        "prompt_style": prompt_name,
+                        "max_points": job['max_points'],
+                        "actual_points": job['actual_points'],
+                        "ai_evaluation_json": None,
+                        "latency_seconds": -1,
+                        "input_tokens": None,
+                        "output_tokens": None,
                         "error": str(e)
                     }
 
@@ -224,60 +237,72 @@ def discover_grading_jobs(root_path):
     """Finds all tasks and student answers to create grading jobs."""
     grading_jobs = []
     print("Discovering tasks, student answers, and actual scores...")
-    for subject_path in root_path.iterdir():
-        if not subject_path.is_dir() or subject_path.name.startswith('_'): continue
-        for test_path in subject_path.iterdir():
-            if not test_path.is_dir(): continue
 
-            aufg_path = test_path / "Aufgabenstellungen"
-            if not aufg_path.exists(): continue
+    for data_type_path in root_path.iterdir():
+        if not data_type_path.is_dir() or data_type_path.name.startswith('_'):
+            continue
+        print(f"--- Processing Data Type: {data_type_path.name} ---")
 
-            tasks = {f.stem: f.read_text(encoding='utf-8') for f in aufg_path.glob("Aufgabe*.md")}
-
-            materials_text = "\n\n".join(
-                [f"--- {m.stem} ---\n{m.read_text(encoding='utf-8')}"
-                 for m in aufg_path.glob("M*.md")])
-
-            max_points_map = parse_punkte_file(aufg_path / "Punkte.md")
-            # print(f"DEBUG: Parsed max points for {test_path.relative_to(root_path)}: {max_points_map}")
-
-            if not max_points_map:
-                print(
-                    f"Warning: Could not parse any points from {aufg_path / 'Punkte.md'}. Skipping all tasks in this test.")
+        for subject_path in data_type_path.iterdir():
+            if not subject_path.is_dir() or subject_path.name.startswith('_'):
                 continue
 
-            for student_dir in test_path.iterdir():
-                if student_dir.is_dir() and student_dir.name.startswith("P"):
-                    actual_points_map = parse_erhaltene_punkte(student_dir)
-                    # print(f"DEBUG: Parsed actual points for {student_dir.relative_to(root_path)}: {actual_points_map}")
+            for test_path in subject_path.iterdir():
+                if not test_path.is_dir():
+                    continue
 
-                    if not actual_points_map:
-                        print(
-                            f"Warning: Could not parse any points from {student_dir / 'ErhaltenePunkte.md'}. Skipping this student.")
-                        continue
+                aufg_path = test_path / "Aufgabenstellungen"
+                if not aufg_path.exists():
+                    continue
 
-                    for student_answer_file in student_dir.glob("Aufgabe*.md"):
-                        task_name = student_answer_file.stem
+                tasks = {f.stem: f.read_text(encoding='utf-8') for f in aufg_path.glob("Aufgabe*.md")}
 
-                        if task_name in tasks:
-                            max_points = max_points_map.get(task_name)
-                            actual_points = actual_points_map.get(task_name)
+                materials_text = "\n\n".join(
+                    [f"--- {m.stem} ---\n{m.read_text(encoding='utf-8')}"
+                     for m in aufg_path.glob("M*.md")]
+                )
 
-                            if max_points is None or actual_points is None:
-                                print(
-                                    f"Warning: Missing points data for task '{task_name}' in student dir '{student_dir}'. Skipping job.")
-                                continue
+                max_points_map = parse_punkte_file(aufg_path / "Punkte.md")
 
-                            grading_jobs.append({
-                                "job_id": f"{subject_path.name}_{test_path.name}_{task_name}_{student_dir.name}",
-                                "subject": subject_path.name,
-                                "task_name": task_name,
-                                "student_answer": student_answer_file.read_text(encoding='utf-8'),
-                                "task_text": tasks[task_name],
-                                "materials_text": materials_text,
-                                "max_points": max_points,
-                                "actual_points": actual_points
-                            })
+                if not max_points_map:
+                    print(
+                        f"Warning: Could not parse any points from {aufg_path / 'Punkte.md'}. Skipping all tasks in this test.")
+                    continue
+
+                for student_dir in test_path.iterdir():
+                    if student_dir.is_dir() and student_dir.name.startswith("P"):
+                        actual_points_map = parse_erhaltene_punkte(student_dir)
+
+                        if not actual_points_map:
+                            print(
+                                f"Warning: Could not parse any points from {student_dir / 'ErhaltenePunkte.md'}. Skipping this student.")
+                            continue
+
+                        for student_answer_file in student_dir.glob("Aufgabe*.md"):
+                            task_name = student_answer_file.stem
+
+                            if task_name in tasks:
+                                max_points = max_points_map.get(task_name)
+                                actual_points = actual_points_map.get(task_name)
+
+                                if max_points is None or actual_points is None:
+                                    print(
+                                        f"Warning: Missing points data for task '{task_name}' in student dir '{student_dir}'. Skipping job.")
+                                    continue
+
+                                grading_jobs.append({
+                                    # MODIFIED: Added data_type to job_id for better uniqueness
+                                    "job_id": f"{data_type_path.name}_{subject_path.name}_{test_path.name}_{task_name}_{student_dir.name}",
+                                    "data_type": data_type_path.name,  # ADDED: Store the data type
+                                    "subject": subject_path.name,
+                                    "task_name": task_name,
+                                    "student_answer": student_answer_file.read_text(encoding='utf-8'),
+                                    "task_text": tasks[task_name],
+                                    "materials_text": materials_text,
+                                    "max_points": max_points,
+                                    "actual_points": actual_points
+                                })
+
     print(f"Found {len(grading_jobs)} individual student answers to grade.")
     return grading_jobs
 

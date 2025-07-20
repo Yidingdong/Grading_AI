@@ -1,11 +1,12 @@
-# analyze_results.py
-
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 import re
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
+import matplotlib.patches as mpatches # <-- Added Import
 import numpy as np
 
 # --- CONFIGURATION ---
@@ -79,7 +80,7 @@ def plot_winners_summary(winners):
     plt.savefig(OUTPUT_DIR / "summary.png", dpi=150)
     plt.close()
 
-
+'''
 def plot_accuracy_chart(stats_df, successful_df):
     """
     Generates a bar plot (for the mean percentage error) overlaid with a swarm plot
@@ -237,10 +238,65 @@ def plot_performance_efficiency_chart(stats_df):
     plt.tight_layout(pad=1.5)
     plt.savefig(OUTPUT_DIR / "4_performance_vs_efficiency.png", dpi=150)
     plt.close()
+'''
 
+
+def plot_consistency_distribution(df, model_order):
+    print(" -> Generating 7. Consistency Distribution Chart (Violin Plot)...")
+    successful_df = df[df['ai_awarded_points'].notna()].copy()
+
+    if successful_df.empty or successful_df['max_points'].sum() == 0:
+        print("    -> Skipping chart: No successful data to plot consistency.")
+        return
+
+    successful_df = successful_df[successful_df['max_points'] > 0]
+    successful_df['actual_percent'] = (successful_df['actual_points'] / successful_df['max_points']) * 100
+    successful_df['ai_percent'] = (successful_df['ai_awarded_points'] / successful_df['max_points']) * 100
+    successful_df['percent_point_bias'] = successful_df['ai_percent'] - successful_df['actual_percent']
+
+    consistency_scores = successful_df.groupby('subject')['percent_point_bias'].std()
+    subject_order = consistency_scores.sort_values(ascending=False).index
+
+    norm = mcolors.Normalize(vmin=consistency_scores.min(), vmax=consistency_scores.max())
+    cmap = cm.get_cmap('coolwarm')
+    color_palette = {subject: cmap(norm(consistency_scores[subject])) for subject in subject_order}
+
+    plt.style.use('seaborn-v0_8-whitegrid')
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    sns.violinplot(
+        data=successful_df,
+        x='percent_point_bias',
+        y='subject',
+        order=subject_order,
+        palette=color_palette,
+        inner=None,
+        orient='h',
+        ax=ax
+    )
+
+    for i, subject in enumerate(subject_order):
+        median_val = successful_df[successful_df['subject'] == subject]['percent_point_bias'].median()
+        ax.plot([median_val, median_val], [i - 0.15, i + 0.15],
+                color='dimgray',
+                solid_capstyle='round',
+                lw=3.5,
+                zorder=3)
+
+    ax.axvline(0, color='darkgrey', linewidth=1, linestyle='--', zorder=0)
+
+    ax.set_title('Consistency Analysis: Distribution of Grading Deviation by Subject', fontsize=18, weight='bold')
+    ax.set_xlabel('Percentage Point Difference (AI % - Teacher %)', fontsize=14)
+    ax.set_ylabel('Subject', fontsize=14)
+
+    plt.text(0.98, 0.02, '← Harsher Grader | Easier Grader →',
+             va='bottom', ha='right', transform=plt.gca().transAxes, color='gray', fontsize=10)
+
+    plt.tight_layout(pad=1.5)
+    plt.savefig(OUTPUT_DIR / "7_consistency_distribution_color_coded.png", dpi=150)
+    plt.close()
 
 def plot_normalized_bias_heatmap(df):
-    """Generates a heatmap showing the AVERAGE PERCENTAGE DEVIATION."""
     print(" -> Generating 5. Subject Bias Heatmap (Normalized)...")
     successful_df = df[df['ai_awarded_points'].notna()].copy()
 
@@ -276,46 +332,57 @@ def plot_normalized_bias_heatmap(df):
 
 
 def plot_grading_tendency_chart(df, model_order):
-    """Generates a diverging bar chart showing the AI's grading tendency in normalized percentage points."""
-    print(" -> Generating 6. Grading Tendency Chart (Normalized)...")
+    print(" -> Generating 6. Grading Tendency Chart (Normalized with Data Types)...")
     successful_df = df[df['ai_awarded_points'].notna()].copy()
 
-    successful_df = successful_df[successful_df['max_points'] > 0]
+    if successful_df.empty or successful_df['max_points'].sum() == 0:
+        print("    -> Skipping chart: No successful data to plot tendency.")
+        return
 
+    successful_df = successful_df[successful_df['max_points'] > 0]
     successful_df['actual_percent'] = (successful_df['actual_points'] / successful_df['max_points']) * 100
     successful_df['ai_percent'] = (successful_df['ai_awarded_points'] / successful_df['max_points']) * 100
-
     successful_df['percent_point_bias'] = successful_df['ai_percent'] - successful_df['actual_percent']
 
-    bias_by_subject = successful_df.groupby(['subject', 'model'])['percent_point_bias'].mean().unstack()
+    plot_data = successful_df.groupby(['subject', 'data_type'])['percent_point_bias'].mean().reset_index()
+    plot_data = plot_data.sort_values('subject', ascending=True) # Sort for consistent plotting order
 
-    bias_by_subject = bias_by_subject.reindex(columns=model_order)
-
-    if bias_by_subject.empty:
+    if plot_data.empty:
         print("    -> Skipping chart: No successful data to plot bias.")
         return
 
-    bias_by_subject.plot(
-        kind='barh',
-        figsize=(12, 8),
-        width=0.8,
-        colormap='coolwarm_r'
+    color_map = {
+        "Klausuren": "#B22222",  # Firebrick red for real data
+        "KI_Daten": "#4682B4"   # Steelblue for AI data
+    }
+    bar_colors = plot_data['data_type'].map(color_map).tolist()
+
+    # 3. Use a standard Matplotlib horizontal bar plot.
+    plt.style.use('seaborn-v0_8-whitegrid')
+    fig, ax = plt.subplots(figsize=(12, 8)) # Use the original figsize
+
+    ax.barh(
+        y=plot_data['subject'],
+        width=plot_data['percent_point_bias'],
+        color=bar_colors,
+        height=0.8
     )
 
-    plt.title('Normalized AI Grading Tendency vs. Human Teacher', fontsize=18, weight='bold')
-    plt.xlabel('Average Percentage Point Difference (AI % - Teacher %)', fontsize=14)
-    plt.ylabel('Subject', fontsize=14)
-    plt.axvline(0, color='black', linewidth=0.8, linestyle='--')
-    plt.legend(title='Model')
-    plt.grid(axis='x', linestyle='--', alpha=0.7)
+    legend_patches = [mpatches.Patch(color=color, label=label) for label, color in color_map.items()]
+    ax.legend(handles=legend_patches, title='Data Type')
+
+    ax.set_title('Normalized AI Grading Tendency vs. Human Teacher', fontsize=18, weight='bold')
+    ax.set_xlabel('Average Percentage Point Difference (AI % - Teacher %)', fontsize=14)
+    ax.set_ylabel('Subject', fontsize=14)
+    ax.axvline(0, color='black', linewidth=0.8, linestyle='--')
+    ax.grid(axis='x', linestyle='--', alpha=0.7)
 
     plt.text(0.98, 0.02, '← Harsher Grader | Easier Grader →',
              va='bottom', ha='right', transform=plt.gca().transAxes, color='gray', fontsize=10)
 
     plt.tight_layout(pad=1.5)
-    plt.savefig(OUTPUT_DIR / "6_grading_tendency_normalized.png", dpi=150)
+    plt.savefig(OUTPUT_DIR / "6_grading_tendency_normalized_by_type.png", dpi=150)
     plt.close()
-
 
 # --- MAIN ANALYSIS SCRIPT ---
 def analyze_full_report(filepath):
@@ -391,13 +458,14 @@ def analyze_full_report(filepath):
         winners = {"Error": "No successful models found"}
 
     print("\n--- Generating Measurable Analysis Charts ---")
-    plot_winners_summary(winners)
-    plot_accuracy_chart(final_stats_sorted, df_successful)
-    plot_latency_chart(final_stats_sorted, df)
-    plot_token_usage_chart(final_stats_sorted)
-    plot_performance_efficiency_chart(final_stats_sorted)
+    #plot_winners_summary(winners)
+    #plot_accuracy_chart(final_stats_sorted, df_successful)
+    #plot_latency_chart(final_stats_sorted, df)
+    #plot_token_usage_chart(final_stats_sorted)
+    #plot_performance_efficiency_chart(final_stats_sorted)
     plot_normalized_bias_heatmap(df)
     plot_grading_tendency_chart(df, model_order=final_stats_sorted.index)
+    plot_consistency_distribution(df, model_order=final_stats_sorted.index)
 
     print(f"\nAnalysis complete. All charts saved to the '{OUTPUT_DIR}' directory.")
 
