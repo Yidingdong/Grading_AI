@@ -78,8 +78,8 @@ def logout_action():
 # --- Page Navigation & Helper Functions ---
 profile_page_nav = st.Page("Profile.py", title="User Profile", icon="👤")
 course_allocation_page_nav = st.Page("courses/allocation.py", title="Allocate New Course", icon="➕")
-my_courses_page_nav = st.Page("courses/my_courses.py", title="List My Courses Overview", icon="🎒")
-grades_page_nav = st.Page("courses/grades.py", title="View My Grades Summary", icon="🗳️")
+my_courses_page_nav = st.Page("courses/my_courses.py", title="My Courses", icon="🎒")
+grades_page_nav = st.Page("courses/grades.py", title="My Grades", icon="🗳️")
 settings_page_nav = st.Page("settings.py", title="Application Settings", icon="⚙️")
 
 def logout_page_func():
@@ -411,35 +411,36 @@ if not st.session_state.logged_in:
                 else:
                     st.error("Username and password are required for login.")
 else:
-    st.sidebar.title(f"Welcome, {st.session_state.username}!")
-    st.sidebar.caption(f"Role: {st.session_state.role}")
-    navigation_config = {"Account": [profile_page_nav, logout_nav_page]}
-    if st.session_state.role == "Teacher":
-        user_id = st.session_state.user_id
-        try:
-            active_courses = session.query(Course).filter_by(teacher_id=user_id, is_active=True).order_by(Course.name).all()
-            completed_courses = session.query(Course).filter_by(teacher_id=user_id, is_active=False).order_by(Course.name).all()
-        except Exception as e: st.sidebar.error(f"DB error: {e}"); active_courses, completed_courses = [], []
-        teacher_active_pages = [st.Page(create_teacher_course_page_callable(c), title=f"Active: {c.name} (TC{c.course_id})", icon="📖") for c in active_courses]
-        teacher_completed_pages = [st.Page(create_teacher_course_page_callable(c), title=f"Done: {c.name} (TC{c.course_id})", icon="📘") for c in completed_courses]
-        navigation_config["Manage Courses"] = [course_allocation_page_nav]
-        if teacher_active_pages: navigation_config["Teacher Active Courses"] = teacher_active_pages
-        if teacher_completed_pages: navigation_config["Teacher Completed Courses"] = teacher_completed_pages
-    elif st.session_state.role == "Student":
-        user_id = st.session_state.user_id
-        try:
-            enrollments = session.query(Enrollment).filter_by(student_id=user_id).all()
-            student_active_course_pages, student_completed_course_pages = [], []
-            for enr in enrollments:
-                if enr.course:
-                    page_callable = create_student_course_page_callable(enr.course, enr)
-                    page_title = f"{enr.course.name} (SC{enr.course.course_id})"
-                    if enr.course.is_active: student_active_course_pages.append(st.Page(page_callable, title=page_title, icon="📄"))
-                    else: student_completed_course_pages.append(st.Page(page_callable, title=page_title, icon="✅"))
-        except Exception as e: st.sidebar.error(f"DB error loading student courses: {e}"); student_active_course_pages, student_completed_course_pages = [], []
-        navigation_config["My Learning Summary"] = [my_courses_page_nav, grades_page_nav]
-        if student_active_course_pages: navigation_config["My Active Courses"] = student_active_course_pages
-        if student_completed_course_pages: navigation_config["My Completed Courses"] = student_completed_course_pages
-    navigation_config["Tools"] = [settings_page_nav]
-    pg = st.navigation(navigation_config)
-    pg.run()
+    if st.session_state.logged_in:
+        st.sidebar.title(f"Welcome, {st.session_state.username}!")
+        st.sidebar.caption(f"Role: {st.session_state.role}")
+        navigation_config = {"Account": [profile_page_nav, logout_nav_page]}
+        if st.session_state.role == "Teacher":
+            user_id = st.session_state.user_id
+            try:
+                active_courses = session.query(Course).filter_by(teacher_id=user_id, is_active=True).order_by(Course.name).all()
+                completed_courses = session.query(Course).filter_by(teacher_id=user_id, is_active=False).order_by(Course.name).all()
+            except Exception as e: st.sidebar.error(f"DB error: {e}"); active_courses, completed_courses = [], []
+            teacher_active_pages = [st.Page(create_teacher_course_page_callable(c), title=f"Active: {c.name} (TC{c.course_id})", icon="📖") for c in active_courses]
+            teacher_completed_pages = [st.Page(create_teacher_course_page_callable(c), title=f"{c.name} (TC{c.course_id})", icon="📘") for c in completed_courses]
+            navigation_config["Manage Courses"] = [course_allocation_page_nav]
+            if teacher_active_pages: navigation_config["Active Courses"] = teacher_active_pages
+            if teacher_completed_pages: navigation_config["Completed Courses"] = teacher_completed_pages
+        elif st.session_state.role == "Student":
+            user_id = st.session_state.user_id
+            try:
+                enrollments = session.query(Enrollment).filter_by(student_id=user_id).all()
+                student_active_course_pages, student_completed_course_pages = [], []
+                for enr in enrollments:
+                    if enr.course:
+                        page_callable = create_student_course_page_callable(enr.course, enr)
+                        page_title = f"{enr.course.name} (SC{enr.course.course_id})"
+                        if enr.course.is_active: student_active_course_pages.append(st.Page(page_callable, title=page_title, icon="📄"))
+                        else: student_completed_course_pages.append(st.Page(page_callable, title=page_title, icon="✅"))
+            except Exception as e: st.sidebar.error(f"DB error loading student courses: {e}"); student_active_course_pages, student_completed_course_pages = [], []
+            navigation_config["My Learning Summary"] = [my_courses_page_nav, grades_page_nav]
+            if student_active_course_pages: navigation_config["My Active Courses"] = student_active_course_pages
+            if student_completed_course_pages: navigation_config["My Completed Courses"] = student_completed_course_pages
+        navigation_config["Tools"] = [settings_page_nav]
+        pg = st.navigation(navigation_config)
+        pg.run()
