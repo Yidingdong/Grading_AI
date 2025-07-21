@@ -49,3 +49,23 @@ To also remove built images:
 ```bash
 docker compose down -v --rmi all
 ```
+---
+## How to use the Web-App
+
+**As a teacher**
+1. Sign up (role: teacher)
+2. Log in
+3. Allocate a course 
+4. Open the course to:
+4.1. Upload reference papers, question papers
+4.2. Access student-submissions
+5. Select a student to garde their submission
+6. Confirm AI-grade --> save it as manual grade
+7. Complete course once all submissions have been graded
+
+**As a student**
+1. Sign up (role: student)
+2. Log in
+3. Choose an active course 
+4. Submit answer sheet
+5. View the grade ("view my grades ")
