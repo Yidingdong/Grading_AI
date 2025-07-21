@@ -10,8 +10,9 @@
     docker compose up --build -d
     ```
     *(This builds images and starts all services in the background.)*
+    *Note: remember to create a secret.txt file in your root project and paste your API Key there!"
 
-2.  **Access Frontend:**
+3.  **Access Frontend:**
     Open [http://localhost:8080](http://localhost:8080) in your browser.
     *(Initial startup may take a few minutes.)*
 
